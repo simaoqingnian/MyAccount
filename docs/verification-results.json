@@ -1,0 +1,124 @@
+{
+  "date": "2026-11-04",
+  "browser": "155.0.8059.86",
+  "mode": "headless Chrome; file://; isolated storage",
+  "checks": [
+    {
+      "name": "初始账目与首页汇总一致",
+      "status": "passed"
+    },
+    {
+      "name": "新增支出联动首页与本地持久化",
+      "status": "passed"
+    },
+    {
+      "name": "编辑金额重算，不增加记录数",
+      "status": "passed"
+    },
+    {
+      "name": "删除需确认，取消保留，确认恢复原汇总",
+      "status": "passed"
+    },
+    {
+      "name": "非法金额不写入，未保存输入取消时保留",
+      "status": "passed"
+    },
+    {
+      "name": "关键词、类别、日历与类型筛选交集正确",
+      "status": "passed"
+    },
+    {
+      "name": "统计分类可下钻且汇总一致",
+      "status": "passed"
+    },
+    {
+      "name": "空月份呈现零汇总与空状态",
+      "status": "passed"
+    },
+    {
+      "name": "分类预算超额被拒绝，合法调整显示超支",
+      "status": "passed"
+    },
+    {
+      "name": "演示重置恢复初始数据与预算",
+      "status": "passed"
+    },
+    {
+      "name": "金额隐藏持久化且可恢复显示",
+      "status": "passed"
+    },
+    {
+      "name": "CSV 下载包含当月全部数据",
+      "status": "passed"
+    },
+    {
+      "name": "完整 JSON 备份可下载且包含账目预算",
+      "status": "passed"
+    },
+    {
+      "name": "恢复备份先校验确认，并回滚临时新增账目",
+      "status": "passed"
+    },
+    {
+      "name": "损坏文件不覆盖数据",
+      "status": "passed"
+    },
+    {
+      "name": "备注按文本呈现，不执行 HTML",
+      "status": "passed"
+    },
+    {
+      "name": "年视图显示12个月，切换年份重新汇总",
+      "status": "passed"
+    },
+    {
+      "name": "年度趋势选点并下钻历史月份",
+      "status": "passed"
+    },
+    {
+      "name": "跨年周范围与七天趋势正确",
+      "status": "passed"
+    },
+    {
+      "name": "年份选择、空年度、未来周期边界",
+      "status": "passed"
+    },
+    {
+      "name": "年度分类下钻覆盖整年，而非仅当前月",
+      "status": "passed"
+    },
+    {
+      "name": "历年账单按年份展开12个月，月行可进入对应趋势",
+      "status": "passed"
+    },
+    {
+      "name": "历史图表的金额隐藏同步覆盖汇总和数据点",
+      "status": "passed"
+    },
+    {
+      "name": "旧版浏览器账目保持原样，确认后才补充历史演示",
+      "status": "passed"
+    },
+    {
+      "name": "桌面无未捕获脚本错误",
+      "status": "passed"
+    },
+    {
+      "name": "手机年度、历史月份和历年账单均无横向溢出",
+      "status": "passed"
+    },
+    {
+      "name": "390px 手机页面无横向溢出，键盘保存可达",
+      "status": "passed"
+    },
+    {
+      "name": "360px 窄屏与 430px 屏幕主流程可用",
+      "status": "passed"
+    },
+    {
+      "name": "所有手机交互无未捕获脚本错误",
+      "status": "passed"
+    }
+  ],
+  "pageErrors": []
+}

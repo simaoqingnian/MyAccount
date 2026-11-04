@@ -1,0 +1,21 @@
+# Local dependencies and caches
+node_modules/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.cache/
+
+# Generated delivery bundles; their source files are tracked
+/*.zip
+
+# Local credentials and signing files
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini

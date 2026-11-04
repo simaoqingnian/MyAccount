@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#174e42">
+  <title>禾记 · 把日子记清楚</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="review-shell">
+    <aside class="intro">
+      <a class="wordmark" href="../index.html"><span class="brand-mark">禾</span> 禾记 <small>HEJI</small></a>
+      <div class="eyebrow">EVERYDAY, A LITTLE CLEARER</div>
+      <h1>把日子过好，<br>把小账记清。</h1>
+      <p class="intro-copy">一笔一笔，了解生活的样子。<br>轻一点记账，多一点从容。</p>
+      <div class="review-nav" aria-label="原型页面快捷导航">
+        <button data-action="nav" data-page="home"><span>01</span> 收支总览 <b>↗</b></button>
+        <button data-action="add"><span>02</span> 快速记账 <b>↗</b></button>
+        <button data-action="nav" data-page="bills"><span>03</span> 明细与日历 <b>↗</b></button>
+        <button data-action="nav" data-page="stats"><span>04</span> 图表与历史账单 <b>↗</b></button>
+        <button data-action="nav" data-page="budget"><span>05</span> 月度预算 <b>↗</b></button>
+        <button data-action="nav" data-page="mine"><span>06</span> 数据与设置 <b>↗</b></button>
+      </div>
+      <div class="intro-footer"><span class="live-dot"></span> 可交互原型 · Android MVP<br><a href="../docs/需求与设计说明.html">查看需求与调研文档 ↗</a></div>
+    </aside>
+    <section class="device-wrap" aria-label="禾记手机原型">
+      <div class="device" id="device">
+        <div class="statusbar"><span>9:41</span><div><span class="signal">▂▄▆</span><svg width="15" height="13" viewBox="0 0 20 16" aria-hidden="true"><path d="M2 5Q10-2 18 5M5 8Q10 3 15 8M8 11Q10 9 12 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="14" r="1"/></svg><span class="battery"></span></div></div>
+        <header id="app-header"></header>
+        <main id="app-main"></main>
+        <nav id="app-nav" aria-label="底部导航"></nav>
+        <div id="overlay"></div>
+        <div id="toast" role="status" aria-live="polite"></div>
+        <div class="home-indicator"></div>
+      </div>
+      <span class="device-caption">HEJI / INTERACTIVE PROTOTYPE V0.2</span>
+    </section>
+    <aside class="context-panel">
+      <span class="section-kicker">DESIGN NOTES</span>
+      <h2 id="context-title">生活有数，心里有底。</h2>
+      <p id="context-copy">让收入、支出和预算回到一眼看懂的日常。重要的数字，留在最舒服的位置。</p>
+      <div class="context-divider"></div>
+      <span class="section-kicker">TRY IT OUT</span>
+      <ol><li>点下方 <strong>＋</strong>，记一笔午餐</li><li>回到首页，看收支与预算变化</li><li>点开账目，试试编辑与删除</li></ol>
+      <div class="swatches"><i style="background:#174e42"></i><i style="background:#aac0a4"></i><i style="background:#eac4a0"></i><i style="background:#f7f8f2"></i></div>
+      <p class="small-note">虚构演示数据 · 2026.11.04<br>数据只保存在当前浏览器。<br>无需登录，刷新后可继续体验。</p>
+      <a class="concept-link" href="../design/sunburst-concept.png" target="_blank" rel="noopener">Sunburst 视觉探索 ↗</a>
+    </aside>
+  </div>
+  <input type="file" id="restore-file" accept=".json,application/json" hidden>
+  <script src="domain.js"></script>
+  <script src="stats.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

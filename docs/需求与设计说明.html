@@ -1,0 +1,908 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>禾记 · 调研、需求与设计说明</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#f4f5ee;color:#283d34;font-family:"Microsoft YaHei","Segoe UI",sans-serif;font-size:14px;line-height:1.9}nav{position:sticky;top:0;z-index:3;background:#174e42;color:#fff;padding:16px 5%;display:flex;gap:28px;align-items:center;font-size:12px}nav a{color:#fff;text-decoration:none}nav strong{font-size:17px;margin-right:auto}main{max-width:1050px;margin:38px auto;padding:0 28px}.cover{padding:28px 0 36px;border-bottom:1px solid #cdd9c5}.cover small{letter-spacing:2px;color:#697b61}.cover h1{font-size:40px;font-weight:500;line-height:1.45}.cover p{color:#6d7968}article{scroll-margin-top:80px;padding:20px 0 45px}article+article{border-top:2px solid #174e42}h1{font-size:29px;margin:28px 0 22px}h2{font-size:21px;color:#174e42;margin:36px 0 16px}h3{font-size:17px;margin:28px 0 12px}p{margin:12px 0}table{border-collapse:collapse;width:100%;font-size:12px;margin:20px 0;line-height:1.8}th,td{border:1px solid #d5decf;padding:10px 12px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#e4ecdc;color:#214937;font-weight:600}tbody tr:nth-child(even){background:#eef2e8}a{color:#326950;text-underline-offset:3px}li{padding:3px 0}code{background:#e8eddf;padding:2px 5px;border-radius:4px;font-family:Consolas,monospace;font-size:.9em;overflow-wrap:anywhere}pre{white-space:pre-wrap;background:#e8eddf;padding:18px;border-radius:12px;line-height:1.6;overflow:auto}pre code{padding:0}blockquote{border-left:3px solid #93ad84;margin:20px 0;padding:0 18px}img{max-width:100%}.print-button{border:1px solid #ffffff80;background:none;color:white;padding:6px 12px;border-radius:6px;cursor:pointer;font:inherit}.flow{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0;padding:20px;background:#e8efdf;border-radius:12px}.flow span{background:white;border:1px solid #b5c9a7;border-radius:8px;padding:9px 14px;font-size:12px}.flow i{align-self:center;font-style:normal;color:#6d865c}.footer{padding:25px 0;color:#74846b;font-size:11px}
+@media(max-width:700px){nav{gap:12px;flex-wrap:wrap;padding:12px 18px}nav strong{width:100%}main{padding:0 17px;margin-top:20px}.cover h1{font-size:30px}h1{font-size:25px}table{display:block;overflow:auto}th,td{min-width:100px}.print-button{display:none}}
+@media print{@page{size:A4;margin:16mm 13mm 18mm}body{background:white;font-size:10px;line-height:1.7}nav{display:none}main{max-width:none;margin:0;padding:0}.cover{break-after:page;padding:30mm 0 0;border:0}.cover h1{font-size:32px}.cover img{margin-top:25px;width:100%}article{padding:0;scroll-margin:0}article+article{break-before:page;border:0}h1{font-size:23px}h2{font-size:16px;margin-top:22px}h3{font-size:13px}h1,h2,h3{break-after:avoid}table{font-size:9px;line-height:1.6;display:table}th,td{padding:6px;min-width:0}tr{break-inside:avoid}thead{display:table-header-group}pre{font-size:9px;break-inside:avoid}a{color:#28543d;text-decoration:none}.flow{break-inside:avoid}p{orphans:3;widows:3}.footer{display:none}}
+</style></head><body><nav><strong>禾记 / 产品文档</strong><a href="#research">竞品调研</a><a href="#prd">MVP 需求</a><a href="#design">原型交接</a><a href="../prototype/index.html">打开原型 ↗</a><button class="print-button" onclick="window.print()">打印 / PDF</button></nav><main><section class="cover"><small>MYACCOUNT / PRODUCT REQUIREMENTS V0.2</small><h1>禾记个人记账 APP<br>调研、需求与设计说明</h1><p>Android 优先 · 离线个人记账 MVP<br>2026 年 11 月 4 日 · 用户已确认 MVP 方向</p><p>包含官方功能证据、业务规则、开发拆分、验收条件与原型交接。<br>本次交付为需求和网页原型，尚未构建原生 Android 应用。</p><img src="../design/sunburst-concept.png" alt="Sunburst 原创视觉探索"><p style="font-size:10px">封面图为 AI 视觉探索，具体金额、日期和功能以本文需求及交互原型为准。</p></section><article id="research"><h1 id="_1">鲨鱼记账功能调研</h1>
+<p>调研日期：2026-11-04（中国标准时间） · 对象：官方鲨鱼记账 Android / iOS 普通版、iOS Pro · 方法：官网、开发者在应用商店发布的介绍；图表栏目补充参考有明确体验环境的历史体验报告及教程，并单独标注证据等级。未安装登录实测，未购买会员；下文的“已确认”仅代表官方公开资料支持。</p>
+<h2 id="1">1. 调研结论</h2>
+<p>鲨鱼记账值得借鉴的主线是：缩短日常录入路径，用明细和图表反馈消费，再以预算和提醒帮助坚持记账。对于本项目，建议围绕这条主线开发 Android 个人记账 MVP，暂不引入社交、订阅、自动识别和复杂资产管理。</p>
+<p><strong>身份核对：</strong>Android 包名 <code>com.shark.jizhang</code>，小米商店开发者为“鲨鱼快游网络技术（北京）有限公司”；iOS 普通版 ID 为 <code>1079718756</code>，Pro 为 <code>1163515895</code>，开发者显示 <code>Beijing Shark Pioneer Network Technology Co.,Ltd</code>。Android 商店页面本次显示版本 <strong>5.87.0</strong>，更新日期 <strong>2026-11-03</strong>。这些信息仅用于确定调研对象，不代表所有渠道同步到同一版本。<a href="https://m.app.mi.com/details?id=com.shark.jizhang">Android 官方商店资料</a> · <a href="https://apps.apple.com/cn/app/id1079718756">iOS 普通版</a> · <a href="https://apps.apple.com/cn/app/id1163515895">iOS Pro</a></p>
+<p>搜索结果中还有不同开发者发布的同名应用。不能将其语音、OCR、Siri、多账本等描述并入本次调研；本报告不采用此类结果。</p>
+<h2 id="2">2. 功能证据清单</h2>
+<p>下表是公开资料层面的功能整理。“官网”不能直接证明 Android 当前版本的入口或免费权益；“Pro”仅证明该 iOS 产品的介绍中包含相关能力。</p>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>已确认的公开能力</th>
+<th>证据 / 平台</th>
+<th>本项目建议（自主规划）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>快速记账</td>
+<td>简短录入流程，以快速完成一笔记录为卖点</td>
+<td><a href="https://m.app.mi.com/details?id=com.shark.jizhang">Android 商店</a></td>
+<td>P0：类别、金额、日期、备注，保存后立即可见</td>
+</tr>
+<tr>
+<td>统计分析</td>
+<td>消费走势；Pro 介绍另列饼图分析</td>
+<td><a href="https://m.app.mi.com/details?id=com.shark.jizhang">Android 商店</a>、<a href="https://apps.apple.com/cn/app/id1163515895">Pro</a></td>
+<td>P0：周/月/年趋势、分类排行、历年收支与逐月下钻；具体参考见下文补充</td>
+</tr>
+<tr>
+<td>备注辅助</td>
+<td>根据历史输入提供备注提示</td>
+<td><a href="https://apps.apple.com/cn/app/id1079718756">普通版</a></td>
+<td>P1：先完成稳定输入，再优化联想</td>
+</tr>
+<tr>
+<td>数据同步</td>
+<td>登录后账目同步云端</td>
+<td><a href="https://apps.apple.com/cn/app/id1079718756">普通版</a></td>
+<td>P1：MVP 先离线存储与本地备份</td>
+</tr>
+<tr>
+<td>记账提醒</td>
+<td>可配置每日提醒时间</td>
+<td><a href="https://m.app.mi.com/details?id=com.shark.jizhang">Android 商店</a></td>
+<td>P1：用户主动开启通知</td>
+</tr>
+<tr>
+<td>桌面入口</td>
+<td>iOS 普通版列有小组件快速记账</td>
+<td><a href="https://apps.apple.com/cn/app/id1079718756">普通版</a></td>
+<td>P1：单独评估 Android 小组件</td>
+</tr>
+<tr>
+<td>预算</td>
+<td>月预算、分类预算；Android 简介提到超支预警</td>
+<td><a href="https://www.shayujizhang.com/">官网</a>、<a href="https://m.app.mi.com/details?id=com.shark.jizhang">Android 商店</a></td>
+<td>P0：总预算与分类预算，站内预警</td>
+</tr>
+<tr>
+<td>数据导出</td>
+<td>导出为 Excel 文件</td>
+<td><a href="https://www.shayujizhang.com/">官网</a></td>
+<td>P0：CSV 明细与 JSON 完整备份；不能把 CSV 宣称为原生 XLSX</td>
+</tr>
+<tr>
+<td>周期记账</td>
+<td>设置重复的定时记账</td>
+<td><a href="https://www.shayujizhang.com/">官网</a></td>
+<td>P1：需处理重复生成及错过执行</td>
+</tr>
+<tr>
+<td>收支日历</td>
+<td>按日期查看收支</td>
+<td><a href="https://www.shayujizhang.com/">官网</a></td>
+<td>P0：月份切换、每日金额、点击看明细</td>
+</tr>
+<tr>
+<td>搜索</td>
+<td>检索已记录的账单</td>
+<td><a href="https://www.shayujizhang.com/">官网</a></td>
+<td>P0：类别/备注关键词及收支筛选</td>
+</tr>
+<tr>
+<td>应用保护</td>
+<td>官网列手势密码；Pro 列解锁保护、首页金额隐藏</td>
+<td><a href="https://www.shayujizhang.com/">官网</a>、<a href="https://apps.apple.com/cn/app/id1163515895">Pro</a></td>
+<td>P0：金额隐藏；P1：系统生物识别应用锁</td>
+</tr>
+<tr>
+<td>统计周期</td>
+<td>自定义每月开始日期</td>
+<td><a href="https://apps.apple.com/cn/app/id1163515895">Pro</a></td>
+<td>P1：MVP 固定自然月</td>
+</tr>
+<tr>
+<td>标签</td>
+<td>通过标签查看账目汇总</td>
+<td><a href="https://apps.apple.com/cn/app/id1163515895">Pro</a></td>
+<td>P1：先保证分类统计闭环</td>
+</tr>
+<tr>
+<td>主题</td>
+<td>提供多套外观</td>
+<td><a href="https://apps.apple.com/cn/app/id1163515895">Pro</a></td>
+<td>P1：MVP 只交付一套清晰的浅色主题</td>
+</tr>
+</tbody>
+</table>
+<p>官网关于安全的文字属于产品方自述，不能作为加密实现、独立审计或“绝对安全”的证据。本项目的安全要求另行定义，不照搬这类承诺。</p>
+<h2 id="3-vippro">3. 免费版、VIP、Pro 的边界</h2>
+<ul>
+<li>普通版商店标记为免费下载并有应用内购买；Pro 是单独的 iOS 产品。Pro 说明其与 Apple 账号关联，并明确 <strong>Pro 与 VIP 不是相同权益集合</strong>。<a href="https://apps.apple.com/cn/app/id1079718756">普通版</a> · <a href="https://apps.apple.com/cn/app/id1163515895">Pro</a></li>
+<li>普通版介绍中的订阅文案与 App 内购买商品列表存在不同价格记录，因此不把某一个列表价格当作当前统一成交价，也不将 iOS 价格外推到 Android。当前 Android VIP 价格、活动、试用和逐项权限仍需在对应客户端购买页核实。<a href="https://apps.apple.com/cn/app/id1079718756">普通版商品页</a></li>
+<li>可确认官网介绍了预算、导出、搜索等功能，但仅凭官网无法认定其在 Android 普通版中全部免费，或全部仅限 VIP。</li>
+<li>官网会员/自动续费协议页面本次抓取失败，未据此补全权益。<strong>本项目 MVP 不设付费墙</strong>是产品选择，不是鲨鱼记账现状。</li>
+</ul>
+<h2 id="4">4. 信息架构与流程借鉴</h2>
+<p>以下是根据已确认能力整理的本项目流程，并非逐屏复刻或客户端实测结论。</p>
+<div class="flow"><span>当月总览</span><i>→</i><span>记一笔：类型 / 类别 / 金额</span><i>→</i><span>本地保存</span><i>→</i><span>明细 / 日历 / 统计 / 预算</span><i>→</i><span>编辑删除后重算</span></div>
+<p>设计借鉴：主记账入口始终可达；默认日期与类别减少重复操作；总览直接回答“本月花了多少、还剩多少”；分类与原始明细之间可追溯；预算提示必须能看到计算依据。</p>
+<p>本项目不使用竞品名称、商标、吉祥物、官方图片或其页面布局作为交付 UI。临时品牌为“禾记”，视觉与组件独立设计。</p>
+<h2 id="5">5. 未核实项目与实机调研清单</h2>
+<p>当前证据不足以确认官方产品是否提供：OCR/语音识别、全自动支付账单抓取、共享账本、银行账户连接、退款关联、资产负债和批量账单导入。它们不是“确定没有”，也不应作为已有功能写入对标矩阵。</p>
+<p>正式立项后，若要做到逐项竞品对齐，可补一次 Android 实机走查：记录安装来源与版本 → 游客/登录入口 → 新增编辑删除 → 预算设置 → 搜索与导出 → 网络中断 → VIP 购买页权益。只收集测试账目，记录截图、时间、前置条件和结果。上述补充不阻塞个人 MVP 的开发。</p>
+<h2 id="6">6. 图表栏目补充调研（本轮用户明确要求）</h2>
+<p>上一版只实现按月分类统计，遗漏了长期记账用户需要的“年内各月比较”和“历年账单”。本轮将这两项纳入 P0，并把原型底部的“统计”改为“图表”。</p>
+<table>
+<thead>
+<tr>
+<th>证据</th>
+<th>可支持的观察</th>
+<th>限制</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://m.app.mi.com/details?id=com.shark.jizhang">官方 Android 商店</a></td>
+<td>开发者介绍包含消费趋势分析</td>
+<td>未展开说明所有周期和交互细节</td>
+</tr>
+<tr>
+<td><a href="https://www.zcool.com.cn/article/ZOTYzMjM2.html?lng=zh">2019 年产品体验报告</a></td>
+<td>作者明确体验环境为 iPhone 7、iOS 12、V2.1；描述图表的周/月/年切换、总额、平均值、折线与分类排行，以及另一账单入口的年/月收支</td>
+<td>第三方历史资料，不能证明 2026 年 Android 版本的逐像素界面或会员权限</td>
+</tr>
+<tr>
+<td><a href="https://jingyan.baidu.com/article/359911f5ea2e8116ff03061e.html">2024 年图表周期设置教程</a></td>
+<td>教程标注 Android 设备及鲨鱼记账 5.12.3，列出周、月、年默认周期</td>
+<td>仅用来交叉确认周期结构，未据此推定当前购买权益</td>
+</tr>
+</tbody>
+</table>
+<p>本项目采用的组织方式是：<strong>支出/收入 → 周/月/年 → 选择历史周期 → 总额和平均值 → 趋势 → 分类排行 → 原始账目</strong>。另将“历年账单”放在图表页，展示年汇总和可展开的 12 个月收支，这是为本项目作出的入口整合，不声称是竞品当前的相同位置。</p>
+<p>本项目采用自己的配色和组件；没有复用竞品图片。周一开始、平均值分母、未来月份展示方式、演示样本金额等均是独立定义的产品规则，不是对鲨鱼内部算法的推断。</p>
+<h2 id="7">7. 来源登记</h2>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>来源</th>
+<th>本次用途</th>
+<th>访问日期</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td><a href="https://www.shayujizhang.com/">鲨鱼记账官网</a></td>
+<td>预算、导出、日历、定时记账、搜索、保护能力</td>
+<td>2026-11-04</td>
+</tr>
+<tr>
+<td>S2</td>
+<td><a href="https://m.app.mi.com/details?id=com.shark.jizhang">小米应用商店</a></td>
+<td>Android 身份、版本、基础功能</td>
+<td>2026-11-04</td>
+</tr>
+<tr>
+<td>S3</td>
+<td><a href="https://apps.apple.com/cn/app/id1079718756">Apple 普通版</a></td>
+<td>iOS 身份、小组件、订阅及同步说明</td>
+<td>2026-11-04</td>
+</tr>
+<tr>
+<td>S4</td>
+<td><a href="https://apps.apple.com/cn/app/id1163515895">Apple Pro</a></td>
+<td>Pro 能力与版本区别</td>
+<td>2026-11-04</td>
+</tr>
+<tr>
+<td>S5</td>
+<td><a href="https://www.zcool.com.cn/article/ZOTYzMjM2.html?lng=zh">站酷历史体验报告</a></td>
+<td>图表与年/月账单结构的历史参考；非当前版本认证</td>
+<td>2026-11-04</td>
+</tr>
+<tr>
+<td>S6</td>
+<td><a href="https://jingyan.baidu.com/article/359911f5ea2e8116ff03061e.html">百度经验周期设置教程</a></td>
+<td>周/月/年设置的历史交叉参考</td>
+<td>2026-11-04</td>
+</tr>
+</tbody>
+</table>
+<p>页面内容可能继续变化；本报告是该日期的公开资料快照。后面的 PRD 是独立产品需求，功能优先级与规则均为本项目建议。</p></article><article id="prd"><h1 id="app-prd">禾记 APP 产品需求文档（PRD）</h1>
+<p>版本：v0.2 · 日期：2026-11-04 · 项目目录：MyAccount · 状态：可评审、可拆分开发任务；本轮补齐历史年度/月度图表</p>
+<p>用户已确认方向：<strong>个人日常记账，优先实用 MVP。</strong> Android 优先；“禾记”为临时名称。人民币、中文、单用户、单账本、离线使用为本轮设计假设，可在开发前调整。</p>
+<h2 id="1">1. 产品定位与目标</h2>
+<p>为希望掌握日常花销、又不愿维护复杂财务表格的人，提供一款打开就能记、回看就能懂的个人记账工具。核心价值是持续记录与可靠回看，不提供投资建议，不接入支付或银行卡交易。</p>
+<p>典型场景：午饭后记 32 元；晚上补记当天地铁和咖啡；月中查看餐饮预算；月底导出账目；换设备前备份恢复。</p>
+<p>目标与验收方式：</p>
+<table>
+<thead>
+<tr>
+<th>目标</th>
+<th>设计指标 / 验证方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>录入轻量</td>
+<td>热启动后，常用类别支出记录以 5 秒内完成为可用性目标；5 名目标用户各试 3 笔，记录中位数，不把宣传用语当实测结果</td>
+</tr>
+<tr>
+<td>离线可靠</td>
+<td>飞行模式可完成增删改查、统计与备份；强制结束并重启后已保存账目一致</td>
+</tr>
+<tr>
+<td>金额可信</td>
+<td>所有求和、分类、预算使用同一整数分模型；固定样本比对达到逐分一致</td>
+</tr>
+<tr>
+<td>可找回数据</td>
+<td>导出完整备份后能在干净安装中恢复；恢复前可预览并备份旧数据</td>
+</tr>
+<tr>
+<td>低维护成本</td>
+<td>首版不依赖注册或远程服务，无广告 SDK、无订阅流程</td>
+</tr>
+</tbody>
+</table>
+<p>以上是待验收目标，不代表当前 HTML 原型或尚未开发的 Android 应用已经达到。</p>
+<h2 id="2">2. 用户故事</h2>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>用户希望</th>
+<th>成功条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>US01</td>
+<td>消费后快速记一笔</td>
+<td>首页一键进入，默认今天，选类别输入金额即可保存</td>
+</tr>
+<tr>
+<td>US02</td>
+<td>补记或纠正遗漏</td>
+<td>能选历史日期；修改后列表、汇总、图表与预算同时更新</td>
+</tr>
+<tr>
+<td>US03</td>
+<td>找到某笔账</td>
+<td>按月份、收支类型、类别、备注关键词查找，并可进入详情</td>
+</tr>
+<tr>
+<td>US04</td>
+<td>知道钱花在哪里，回看历年变化</td>
+<td>周/月/年趋势、年内月份比较、历年收支可见；分类汇总可追溯至同周期明细</td>
+</tr>
+<tr>
+<td>US05</td>
+<td>控制本月支出</td>
+<td>设定总预算和分类预算，看到剩余及超支金额</td>
+</tr>
+<tr>
+<td>US06</td>
+<td>自己保管账目</td>
+<td>可导出 CSV；完整 JSON 备份可验证、恢复</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3">3. 范围与优先级</h2>
+<p>P0 为首发必须闭环；P1 为首版稳定后增强；P2 为需求验证后再立项。原型范围见设计文档，不能将网页演示等同原生完成。</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>能力</th>
+<th>优先级</th>
+<th>首版边界</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F01</td>
+<td>新增收入/支出</td>
+<td>P0</td>
+<td>类别、金额、日期、备注；保存即更新</td>
+</tr>
+<tr>
+<td>F02</td>
+<td>账目详情、编辑、删除</td>
+<td>P0</td>
+<td>删除二次确认，成功提示；编辑保留 ID</td>
+</tr>
+<tr>
+<td>F03</td>
+<td>月度总览</td>
+<td>P0</td>
+<td>收入、支出、当月结余、预算、最近账目</td>
+</tr>
+<tr>
+<td>F04</td>
+<td>明细、搜索、筛选</td>
+<td>P0</td>
+<td>月份、类型、类别、关键词；日分组</td>
+</tr>
+<tr>
+<td>F05</td>
+<td>收支日历</td>
+<td>P0</td>
+<td>月视图、每日收支、选日过滤；不记未来账</td>
+</tr>
+<tr>
+<td>F06</td>
+<td>周/月/年图表与历史账单</td>
+<td>P0</td>
+<td>收支切换、历史周期、日/月趋势、总额与平均值、分类排行、年/月收支表与明细下钻</td>
+</tr>
+<tr>
+<td>F07</td>
+<td>预算</td>
+<td>P0</td>
+<td>自然月总预算与分类预算、80%/100%站内提示</td>
+</tr>
+<tr>
+<td>F08</td>
+<td>本地持久化</td>
+<td>P0</td>
+<td>无需登录；数据库事务；失败不报成功</td>
+</tr>
+<tr>
+<td>F09</td>
+<td>导出与完整备份恢复</td>
+<td>P0</td>
+<td>CSV 为当月全部账目；JSON 为所有月份及预算设置</td>
+</tr>
+<tr>
+<td>F10</td>
+<td>设置与金额隐藏</td>
+<td>P0</td>
+<td>主要金额遮罩、演示数据重置仅原型提供</td>
+</tr>
+<tr>
+<td>F11</td>
+<td>自定义类别与备注联想</td>
+<td>P1</td>
+<td>排序、停用类别；历史引用必须保留</td>
+</tr>
+<tr>
+<td>F12</td>
+<td>记账提醒、系统应用锁</td>
+<td>P1</td>
+<td>主动授权通知；系统生物识别/凭据</td>
+</tr>
+<tr>
+<td>F13</td>
+<td>定时账单、标签、统计周期</td>
+<td>P1</td>
+<td>补发与幂等机制；薪资周期可选</td>
+</tr>
+<tr>
+<td>F14</td>
+<td>云备份/多设备同步、小组件</td>
+<td>P1</td>
+<td>先验证需求；同步需冲突与删除传播设计</td>
+</tr>
+<tr>
+<td>F15</td>
+<td>多账本、账户与转账</td>
+<td>P2</td>
+<td>独立账本隔离；转账不算消费，另立数据模型</td>
+</tr>
+<tr>
+<td>F16</td>
+<td>共享账本、OCR/语音、导入外部账单</td>
+<td>P2</td>
+<td>成员权限、识别确认、去重与隐私另行设计</td>
+</tr>
+</tbody>
+</table>
+<p>首版不做会员体系、社区、理财入口、多币种换算、借贷还款和自动抓取支付通知。理由是其成本和数据复杂性超出本次“个人日常记录”目标。</p>
+<h2 id="4">4. 信息架构</h2>
+<p>底部导航：<strong>总览 / 明细 / ＋记一笔 / 图表 / 我的</strong>。图表包含“趋势分析”和“历年账单”。预算由总览预算卡及“我的”进入；日历在明细页内切换。新增和详情使用覆盖层，返回时保留原页筛选。</p>
+<table>
+<thead>
+<tr>
+<th>页面 ID</th>
+<th>页面</th>
+<th>关键内容</th>
+<th>主要动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P01</td>
+<td>总览</td>
+<td>月份、月结余、收支、预算、最近账目</td>
+<td>换月、隐藏金额、记账、查看预算/详情</td>
+</tr>
+<tr>
+<td>P02</td>
+<td>记一笔</td>
+<td>收支类型、类别网格、金额键盘、日期、备注</td>
+<td>保存、取消、编辑回填</td>
+</tr>
+<tr>
+<td>P03</td>
+<td>明细</td>
+<td>搜索、类型/类别过滤、分日流水、日历模式</td>
+<td>过滤、选日、查看详情</td>
+</tr>
+<tr>
+<td>P04</td>
+<td>账目详情</td>
+<td>金额、类型、类别、日期、备注</td>
+<td>编辑、确认删除</td>
+</tr>
+<tr>
+<td>P05</td>
+<td>图表</td>
+<td>支出/收入、周/月/年、历史周期、总额/平均值、折线趋势、分类排行</td>
+<td>前后周期、日期/年份选择、趋势点选、分类明细</td>
+</tr>
+<tr>
+<td>P08</td>
+<td>历年账单（图表内）</td>
+<td>年度收入/支出/结余、展开后的12个月</td>
+<td>展开年份、进入年趋势、进入具体月趋势</td>
+</tr>
+<tr>
+<td>P06</td>
+<td>预算</td>
+<td>月总预算、分类预算、已用/剩余</td>
+<td>编辑总额与分类额</td>
+</tr>
+<tr>
+<td>P07</td>
+<td>我的</td>
+<td>本地数据概况、备份导出、恢复入口</td>
+<td>CSV/JSON 导出、恢复、隐私开关</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5">5. 功能细则与验收</h2>
+<h3 id="f01-f02">F01 / F02：记账与维护</h3>
+<ul>
+<li>账目类型 <code>expense</code> 或 <code>income</code>；金额必须为正，符号由类型决定。初次默认支出、餐饮、今天；再次进入可记住上次合法类别。切换类型时换到该类型默认类别。</li>
+<li>金额支持两位小数，范围 <strong>0.01–999,999,999.99 元</strong>；以字符串解析到整数分，禁止浮点直接累计。拒绝空、零、负数、科学计数法、NaN、溢出；第三位小数不静默四舍五入。</li>
+<li>日期采用账本当地日期 <code>YYYY-MM-DD</code>，可选择 2000-01-01 至今天；日期型账目不随时区换算而跨日。MVP 不允许未来日期，以免与计划账单混淆。</li>
+<li>备注可空，最多 100 个 Unicode 字符；去除首尾空白；保存原文，展示与导出须防脚本/公式注入。</li>
+<li>预置支出类别：餐饮、交通、购物、日用、住房、水电、娱乐、医疗、学习、旅行、人情、其他。收入：工资、奖金、兼职、其他收入。MVP 不允许删除预置类别。</li>
+<li>保存期间禁用重复提交；本地事务落盘成功再关闭表单、刷新总览。失败保留输入并提示重试。</li>
+<li>详情编辑复用表单，保留 <code>id</code>、<code>createdAt</code>；更新 <code>updatedAt</code>。删除弹窗显示金额和备注/类别，需明确确认；事务完成后排除其全部统计。</li>
+<li>返回、取消或关闭覆盖层时，如果表单有修改，提示“放弃本次输入？”；无修改直接退出。</li>
+</ul>
+<p>验收：新增 32.00 元餐饮后月支出增 32.00；改成 28.50 后相对原始值增 28.50；删除后恢复原始月汇总。连续点击保存只产生一个 ID。异常金额不能写入数据库。</p>
+<h3 id="f03-f04-f05">F03 / F04 / F05：总览、明细与日历</h3>
+<ul>
+<li>默认本月，跨年换月允许；选择空月份显示零汇总与“还没有账目”，不复用上月图表。总览“最近账目”限定所选月份，按账目日期降序，同日按创建时间降序。</li>
+<li><strong>月结余 = 当月收入 − 当月支出</strong>；不是现金余额、资产或银行余额。负结余显示负号，不用“亏损”描述。</li>
+<li>明细以月份为基础范围；收支、类别、关键词、日期条件取交集。关键词匹配类别名和备注，忽略拉丁字母大小写；清空搜索保留其他筛选。</li>
+<li>筛选区显示结果笔数及筛选条件；所有条件可清除。切换到不相容收支类型时清空类别筛选。筛选汇总与总览月汇总采用不同文案，避免把局部金额当全月。</li>
+<li>日历按周一开始，显示真实每月天数，闰年 2 月正确。日格收支聚合遵循当前筛选；日列表再叠加所选日期。月末不可渲染不存在的日期。</li>
+<li>无匹配显示“没有找到相关账目”，保留输入；空账本显示“记下第一笔开销”并提供记账入口。</li>
+</ul>
+<p>验收：备注输入“咖啡”仅匹配相关记录；切至收入不出现支出类别；从 2026-11 切到空月后所有金额归零；从统计中的餐饮下钻后显示相同合计。</p>
+<h3 id="f06">F06：周/月/年图表与历年账单</h3>
+<p><strong>页面组织：</strong>顶部支出/收入切换，其下为周/月/年分段，再显示可前后切换的周期标题。主体依次为总额与平均值、折线趋势、分类金额/占比排行；分类环图作为折叠补充。顶部提供“历年账单”入口，避免只看到当月消费结构而无法比较月份。</p>
+<p><strong>周期和导航：</strong></p>
+<ul>
+<li>周：自然周周一至周日，横轴为 7 天；跨月、跨年时仍使用完整的同一周范围，不先按月过滤。</li>
+<li>月：自然月，横轴为当月实际日期，正确处理 28/29/30/31 天。</li>
+<li>年：自然年，横轴固定为 1–12 月，纵轴为对应月的支出或收入合计。</li>
+<li>左右箭头切换上一个/下一个周期；点击标题可选择年份、月份或某日所在的周。最早可选 2000 年，禁止选择完全位于未来的周期。</li>
+<li>初始图表默认本月。图表独立保存当前周期和基准日期，切换类型不丢失周期；其他页面使用自己的所选月份。通过总览/明细换月时更新图表基准日期；在图表中浏览历史不会悄悄改掉总览月份。</li>
+<li>过去的无记录日期/月显示 0；未来日期/月使用「—」且不纳入折线，避免把尚未发生当成消费下降。无记录周期保留零汇总和时间轴，分类区显示空状态。</li>
+</ul>
+<p><strong>金额、平均值与图表：</strong></p>
+<ul>
+<li>所选类型总额 = 所选周期有效账目的金额和；分类分母使用同一周期、同一收支类型的总额。所有分类和趋势桶的金额加总必须等于总额。</li>
+<li>周/月的日均 = 总额 ÷ 已历自然日数（含零记录日、含今天）；完整历史周为 7 天、完整历史月为实际天数。当周/月只算到今天；早于支持日期的天数不计入分母。</li>
+<li>年度月均 = 总额 ÷ 已历月份数：完整历史年除以 12，当年除以当前月份编号，包含正在进行中的月份。界面明确该口径，不声称是完整月份平均值。</li>
+<li>平均值四舍五入到分，仅用于展示；不回写账目或预算。当前周期显示截至日期；不做部分月份与完整月份的误导性同比/环比。</li>
+<li>分类按金额降序，同额保持预置类别顺序。占比保留一位小数；分母为零时不计算占比。显示占比舍入可造成合计 99.9%/100.1%，金额不能丢分。</li>
+<li>折线点可以点击/键盘选择，显示精确金额。年图点某月后“查看本月”进入对应月趋势；周/月点某日后“查看明细”打开当日同类型账目。</li>
+<li>分类排行点击后打开<strong>当前完整周期</strong>的分类明细，不能把年图明细错误限制在当前月。明细允许继续查看、修改、删除记录；返回后保留图表周期并重算。</li>
+<li>金额隐藏应同步覆盖总额、平均值、数据点提示、坐标金额、分类金额和历年表。各视图都从账目动态计算，不使用静态假曲线。</li>
+</ul>
+<p><strong>历年账单：</strong></p>
+<ul>
+<li>从最早记录年份至当前年份按年倒序展示；中间缺失年份仍显示零汇总。每年一行收入、支出、结余（收入减支出）。空账本显示当前年份的空记录。</li>
+<li>展开年份显示 1–12 月的收入、支出与结余；已历无记录月为 0，未来月为「—」并禁用下钻，当前月标记“进行中”。</li>
+<li>点击月行进入该月趋势，点击“查看某年趋势”进入该年图表。年汇总与 12 个月合计必须一致；历史总览累计值与全量账目一致。</li>
+<li>原型新增 2024-01 至 2026-10 的虚构历史数据。新浏览器默认加载；旧浏览器已有数据不会自动覆盖或混入样本，只有点击“添加历史演示账目”并确认后追加，同 ID 不重复插入。</li>
+</ul>
+<p>验收：2026-11 示例支出 2,310.00；2026 年累计支出 32,580.00，11 个已历月份月均 2,961.82；2025 全年支出 35,972.00，2025-02 支出 2,883.00。年/月/分类明细逐分一致。测试跨年周、闰年、空年度、当前年未来月份、历史账目跨月编辑与删除、收入切换、金额隐藏和旧数据保留。</p>
+<h3 id="f07">F07：预算</h3>
+<ul>
+<li>每个自然月一份独立预算；未设置的月份显示“设置预算”，不能自动当成上月预算。总额/分类额为空代表未设置；有效值与金额字段相同且大于零。</li>
+<li>分类预算只对支出类别生效；各分类已分配预算之和不得超过月总预算。降低总预算到已分配金额以下时，说明差额并阻止保存；总预算未设置时不能设置分类预算。</li>
+<li>已用 = 同月全部有效支出；剩余 = 总预算 − 已用，允许负数并显示“已超支 X”。进度条视觉最大 100%，文字百分比可以超过 100%。未设预算不显示虚假的 0% 或无限百分比。</li>
+<li>达 80% 提示“预算已用 80%”；达/超 100% 显示“预算已用完/已超支”。文案中性，不阻止继续记账。</li>
+<li>当月日均可用 = max(剩余, 0) ÷ 含今天的剩余天数；仅本月展示，精确到分向下取整以免夸大额度。历史/未来月份不提供当前日均建议。</li>
+<li>类别预算独立预警；未设置类别仍计入总支出。分类预算是总预算的分配，不能再叠加到总额。</li>
+</ul>
+<p>验收：预算 5,000、支出 2,310，则剩余 2,690、使用 46.2%；改总额为 2,000 且分类分配合法时，超支 310；不能保存分类分配大于总额的方案。</p>
+<h3 id="f08-f09-f10">F08 / F09 / F10：数据、导出与隐私</h3>
+<ul>
+<li>原生应用使用本地数据库，不把浏览器 <code>localStorage</code> 用作 Android 生产存储。无需登录可完成全部 P0。离线无阻塞占位请求。</li>
+<li>CSV：导出<strong>当前所选月份的全部账目</strong>，不随搜索过滤缩小。入口明确月份。字段为账目 ID、日期、类型、类别、金额、币种、备注；UTF-8 BOM，金额带两位小数，逗号/引号/换行按 CSV 转义；可能被表格解释为公式的文本加安全前缀。</li>
+<li>JSON：包含 <code>schemaVersion</code>、导出时间、全量账目、所有月份预算、金额隐藏偏好；金额是整数分。不得包含密钥和设备凭据。文件为明文，导出前说明“请妥善保管备份文件”。</li>
+<li>恢复：选择文件 → 检查大小（首版上限 10 MiB）、JSON 结构、版本、类别/类型、金额范围、日期、备注长度、重复 ID、预算约束 → 显示笔数和覆盖说明 → 用户确认 → 备份当前数据并在单个事务中替换 → 显示结果。格式错误时原数据保持不变。</li>
+<li>MVP 只支持本应用备份恢复，不宣称支持导入鲨鱼/微信/支付宝的格式。恢复方式为全量替换，无模糊合并规则。</li>
+<li>浏览器原型的存储不加密、可能被浏览器清理，仅用于演示；原生正式版应使用应用私有目录和系统级设备保护，应用锁另列 P1。隐藏金额只是屏幕隐私，不是加密，也不应隐藏 CSV/JSON 的真实导出值；导出时明确告知。</li>
+<li>不申请通讯录、短信、定位或无障碍权限。文档选择/分享使用系统能力。无网络的本地模式不嵌入分析 SDK；如以后采集诊断须另行设计授权与脱敏，日志不得输出备注和完整财务明细。</li>
+</ul>
+<p>验收：导出后在新数据环境恢复，各月账目与预算逐分一致；错误版本、负金额、未知类别、重复 ID、非法日期和超限文件必须被拒绝；用户取消恢复不改变数据。</p>
+<h2 id="6">6. 数据模型与不变量</h2>
+<table>
+<thead>
+<tr>
+<th>实体</th>
+<th>关键字段</th>
+<th>约束</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Transaction</td>
+<td>id, type, amountMinor, categoryId, occurredOn, note, createdAt, updatedAt</td>
+<td>UUID/唯一 ID；金额为安全范围内正整数；类别与类型匹配；日期为真实当地日期</td>
+</tr>
+<tr>
+<td>Category</td>
+<td>id, type, name, iconKey, sortOrder, archived</td>
+<td>稳定 ID；P0 为只读预置集合</td>
+</tr>
+<tr>
+<td>MonthBudget</td>
+<td>month, totalMinor?, categoryLimits</td>
+<td>month 唯一；正整数或未设；分类总额 ≤ 总额</td>
+</tr>
+<tr>
+<td>Preferences</td>
+<td>currency, locale, hideAmounts</td>
+<td>P0 固定 CNY、zh-CN；只允许已声明字段</td>
+</tr>
+<tr>
+<td>BackupEnvelope</td>
+<td>schemaVersion, exportedAt, data</td>
+<td>白名单结构解析；拒绝不兼容版本</td>
+</tr>
+</tbody>
+</table>
+<p>金额不变量：分为计算单位，元为显示单位；记录只存正金额；当月收入与支出由类型区分；合计使用 64 位整数并验证溢出；原型额外确保 JavaScript 安全整数范围。分类变更、日期跨月变更必须触发受影响月份的重新汇总。</p>
+<p>首版没有账户余额实体，因此不能展示“总资产”。退款暂按独立收入分类“其他收入”记录，并明确不会冲减原消费分类与预算；关联退款与消费净额统计属于后续能力。转账暂不支持，不能误记成收入/支出宣传支持资产管理。</p>
+<h2 id="7">7. 关键状态与错误</h2>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>反馈</th>
+<th>数据处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>首次进入空账本</td>
+<td>友好空状态 + 记一笔</td>
+<td>不自动写入演示账目（正式版）</td>
+</tr>
+<tr>
+<td>保存成功</td>
+<td>简短提示，返回来源页面</td>
+<td>原子提交后重算</td>
+</tr>
+<tr>
+<td>保存失败/空间不足</td>
+<td>保留输入，说明未保存</td>
+<td>回滚事务，不报成功</td>
+</tr>
+<tr>
+<td>删除确认取消</td>
+<td>关闭确认框</td>
+<td>原记录保留</td>
+</tr>
+<tr>
+<td>输入错误</td>
+<td>字段旁提示具体原因</td>
+<td>阻止保存</td>
+</tr>
+<tr>
+<td>无预算</td>
+<td>显示设置入口</td>
+<td>不做除零</td>
+</tr>
+<tr>
+<td>预算超支</td>
+<td>显示已超支与百分比</td>
+<td>允许继续记录</td>
+</tr>
+<tr>
+<td>无搜索结果</td>
+<td>保留条件，提供清除</td>
+<td>不改账目</td>
+</tr>
+<tr>
+<td>恢复损坏文件</td>
+<td>显示校验失败</td>
+<td>不覆盖现有数据</td>
+</tr>
+<tr>
+<td>中断/进程结束</td>
+<td>重开只看到完整提交</td>
+<td>不产生半条账目</td>
+</tr>
+</tbody>
+</table>
+<h2 id="8">8. 非功能要求</h2>
+<ul>
+<li>可访问性：关键触控区域至少 48dp；正文与背景对比度目标 4.5:1；图表有文字/列表等价信息，收支有符号和文字，不仅依赖颜色；字体放大 1.3 倍后关键操作可达。</li>
+<li>性能目标：以 4GB 内存的中端 Android 设备、1 万条本地账目为基准，冷启动可交互 p95 ≤ 2 秒，保存反馈 p95 ≤ 300ms，月份聚合 p95 ≤ 500ms。正式实现后测量，不作为本次原型测试结果。</li>
+<li>兼容：建议 minSdk 26 起评估；targetSdk 按实际发布渠道当期要求确定。覆盖 360–430dp 常见屏幕宽度、系统返回、软键盘和导航条安全区。</li>
+<li>可维护：业务计算与 UI 分离；类别/颜色令牌集中维护；数据库迁移可回归；设置与账目升级不丢失。</li>
+<li>安全：备注按普通文本渲染；备份输入严格校验；财务数据不写入异常上报；网络同步引入前另行评审冲突、认证、删除传播与备份政策。</li>
+</ul>
+<h2 id="9">9. 推荐开发拆分</h2>
+<p>以下为 <strong>1 名熟悉 Kotlin 的 Android 开发 + 兼职设计/测试</strong> 的粗估，合计约 <strong>24–35 人日</strong>，包含本轮历史图表扩展，不含商店审核、云端和 P1；需在技术验证后调整，不是交付承诺。</p>
+<table>
+<thead>
+<tr>
+<th>工作包</th>
+<th>内容</th>
+<th>估算</th>
+<th>交付门槛</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A 基础与数据</td>
+<td>项目、主题、数据库、类别、金额与日期规则</td>
+<td>3–4 人日</td>
+<td>离线写入与持久化验证</td>
+</tr>
+<tr>
+<td>B 记账闭环</td>
+<td>总览、录入、详情、编辑、删除</td>
+<td>5–7 人日</td>
+<td>US01/US02、重复保存与失败处理</td>
+</tr>
+<tr>
+<td>C 回看分析</td>
+<td>搜索、过滤、日历、周/月/年图表、历年账单和周期下钻</td>
+<td>6–9 人日</td>
+<td>年/月/日/分类/明细金额一致，跨年周和平均值正确</td>
+</tr>
+<tr>
+<td>D 预算与数据自主</td>
+<td>预算、CSV、JSON 校验恢复、隐藏金额</td>
+<td>5–7 人日</td>
+<td>导出恢复往返与预算边界</td>
+</tr>
+<tr>
+<td>E 质量与发布准备</td>
+<td>数据迁移、兼容、可访问性、性能、包签名配置</td>
+<td>5–8 人日</td>
+<td>P0 验收表全部通过，无数据丢失问题</td>
+</tr>
+</tbody>
+</table>
+<p>建议 Android 工程：Kotlin + Jetpack Compose；Room 负责账目，DataStore 负责偏好，ViewModel + StateFlow 驱动 UI，Repository 隔离存储。此处是架构建议，尚未创建 Android 工程，具体依赖版本在开工时确认。</p>
+<h2 id="10">10. 首发验收门槛</h2>
+<ol>
+<li>P0 主路径可在飞行模式完成，重启后账目不丢。</li>
+<li>至少覆盖零金额/小数/大金额、闰年、跨年、改日期跨月、重复提交、空账本、超预算、无匹配。</li>
+<li>列表、统计、预算对同一组账目的计算一致；删除和改类能同步重算。</li>
+<li>完整备份往返数据一致；损坏文件、未知版本、非法记录恢复不破坏原数据。</li>
+<li>原生无强制注册，无假云同步状态，无未实现的会员入口。</li>
+<li>将原型演示数据从正式安装包初始化流程中移除；正式新用户以空账本开始。</li>
+</ol>
+<p>开发前需要收敛但不阻塞本次设计的事项：最终品牌名；Android 最低兼容版本；是否首发加入 P1 的应用锁与提醒；是否保留全部预置类别。MVP 方向已由用户确认，其他均采用上述建议值。</p></article><article id="design"><h1 id="_1">禾记原型设计与开发交接</h1>
+<p>版本：v0.2 · 日期：2026-11-04 · 类型：高保真可交互网页原型 + 独立视觉概念图；已补齐历史图表</p>
+<h2 id="1">1. 交付物与使用</h2>
+<ul>
+<li><code>prototype/index.html</code>：直接双击，用 Edge/Chrome 打开；桌面展示画布含导航说明，窄屏为手机界面。</li>
+<li><code>design/sunburst-concept.png</code>：按用户指定的 GPT Image 2.5 Sunburst 技能生成的视觉探索，可能含生成文字或数值误差，只用于风格参考。</li>
+<li><code>design/prototype-overview.png</code>：由真实运行的 HTML 原型截取，作为实现后视觉预览。</li>
+<li><code>design/history-statistics.png</code>：历史年度、历史月份、历年账单的实际原型截图拼图；<code>prototype/index.html#charts-year</code> 可直达年图，<code>#charts-history</code> 可直达历年账单。</li>
+<li><code>docs/需求与设计说明.html</code> / <code>docs/需求与设计说明.pdf</code>：适合浏览、打印和分享的合并文档；Markdown 为可维护源文件。</li>
+</ul>
+<p>最终交互、文字和计算以 HTML 原型及 PRD 为准。AI 概念图不是逐像素开发规格，也不表示已有 APK。</p>
+<h2 id="2">2. 视觉规范</h2>
+<p>临时品牌“禾记”，寓意日常积累。采用暖白纸张、森林绿主色与少量杏色，减少金融仪表盘的压迫感，保持数字清晰。</p>
+<table>
+<thead>
+<tr>
+<th>令牌</th>
+<th>值</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>background</td>
+<td>#F7F8F2</td>
+<td>主页面暖白底</td>
+</tr>
+<tr>
+<td>surface</td>
+<td>#FFFFFF</td>
+<td>表单、卡片与覆盖层</td>
+</tr>
+<tr>
+<td>primary</td>
+<td>#174E42</td>
+<td>主按钮、品牌、选中态</td>
+</tr>
+<tr>
+<td>primary-soft</td>
+<td>#E6EDDF</td>
+<td>图标底、轻提示</td>
+</tr>
+<tr>
+<td>text</td>
+<td>#253B34</td>
+<td>正文与金额</td>
+</tr>
+<tr>
+<td>muted</td>
+<td>#67766D</td>
+<td>辅助说明</td>
+</tr>
+<tr>
+<td>accent</td>
+<td>#EAC4A0</td>
+<td>次级图表色</td>
+</tr>
+<tr>
+<td>danger</td>
+<td>#B04435</td>
+<td>删除、超支等需注意状态</td>
+</tr>
+<tr>
+<td>border</td>
+<td>#E6E9E0</td>
+<td>分隔与输入边界</td>
+</tr>
+</tbody>
+</table>
+<p>字体使用系统中文无衬线，Windows 优先微软雅黑；数字使用支持等宽数字的系统字体。标题 22–28px，主金额 38–40px，正文 14–16px，辅助文字 12px；移动端正式实现按 sp/dp 转换并适配字体缩放。</p>
+<p>间距以 4/8 为基准，页面横向 22px，主要卡片圆角 20–24px；主动作 48px 以上。图标用统一描边 SVG，避免把图标做成不可编辑的位图。全屏页面尽量一个主动作；危险操作始终配明确文字。</p>
+<h2 id="3">3. 页面与交互规格</h2>
+<table>
+<thead>
+<tr>
+<th>页面</th>
+<th>展示重点</th>
+<th>交互与返回</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>总览</td>
+<td>月份、深绿收支卡、预算卡、最近账目</td>
+<td>换月同步明细/预算并更新图表基准日期；图表历史浏览独立；账目进入详情</td>
+</tr>
+<tr>
+<td>记一笔</td>
+<td>类型切换、醒目金额、类别网格、备注、日期、键盘</td>
+<td>保存后返回来源；编辑模式回填；有修改关闭需确认</td>
+</tr>
+<tr>
+<td>明细</td>
+<td>月选择、搜索、过滤、列表/日历</td>
+<td>日历点日期联动列表；空结果保留筛选</td>
+</tr>
+<tr>
+<td>详情</td>
+<td>类型与金额、类别、日期、备注</td>
+<td>编辑进入记账表单；删除二次确认</td>
+</tr>
+<tr>
+<td>图表</td>
+<td>支出/收入、周/月/年、总额/均值、折线、分类排行</td>
+<td>历史周期切换；选点看精确金额；年图下钻月图；同周期分类明细</td>
+</tr>
+<tr>
+<td>历年账单</td>
+<td>每年和每月的收入、支出、结余</td>
+<td>展开年份；点击月行看当月图表；年份回看年趋势</td>
+</tr>
+<tr>
+<td>预算</td>
+<td>余量、进度、分类额度</td>
+<td>总额与分类一次校验保存；超支不阻止记账</td>
+</tr>
+<tr>
+<td>我的</td>
+<td>本地数据状态、明细导出、备份恢复</td>
+<td>文件下载真实可用；恢复前校验与确认；重置仅为演示工具</td>
+</tr>
+</tbody>
+</table>
+<p>底部中间记账按钮对所有主页面可达。桌面侧栏提供快速跳转与调研文档链接，属于评审画布，不属于 Android 应用界面。</p>
+<h2 id="4">4. 演示数据与计算口径</h2>
+<p>原型日期固定为 <strong>2026-11-04</strong>，避免不同日期打开导致演示变化。月份可切换。首次打开加载虚构数据，保存、编辑、删除及预算修改写入当前浏览器的本地存储。</p>
+<ul>
+<li>2026-11：收入 12,000.00 元，支出 2,310.00 元，结余 9,690.00 元。</li>
+<li>当月总预算 5,000.00 元，剩余 2,690.00 元，已用 46.2%。</li>
+<li>本月仍为 13 笔支出与 1 笔收入；额外提供 2024-01 至 2026-10 每月 6 笔历史演示，共 218 笔。历史记录是按类别构造的虚构样本，所有图表仍从实际账目实时生成。</li>
+<li>2026 年支出 32,580.00；2025 年支出 35,972.00；2025 年 2 月支出 2,883.00，便于检查年图与月图下钻。</li>
+<li>使用过 v0.1 的浏览器保留已有账目；若还没有历史账目，可在“图表 → 历年账单”点击添加历史演示并确认。追加不会覆盖已有账目，同 ID 不重复添加。</li>
+<li>首次示例包括房租、餐饮、交通、购物等。金额仅为虚构演示，不代表真实财务建议。</li>
+<li>“日均可用”含 11 月 4 日当天，共 27 天，为 99.62 元（分单位向下取整）。</li>
+</ul>
+<p>原型“恢复演示数据”会覆盖本浏览器的原型数据，操作需要确认。不要在原型中保存真实敏感账目；正式版必须通过私有数据库与持久化测试。</p>
+<h2 id="5">5. 原型覆盖边界</h2>
+<table>
+<thead>
+<tr>
+<th>能力</th>
+<th>本次原型状态</th>
+<th>正式 Android 还需完成</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>新增、编辑、删除与重算</td>
+<td>实际交互</td>
+<td>Room 事务、生命周期、系统键盘/返回</td>
+</tr>
+<tr>
+<td>月份、搜索、收支/类别过滤、日历</td>
+<td>实际交互</td>
+<td>大数据分页与索引</td>
+</tr>
+<tr>
+<td>周/月/年趋势、历史周期、分类下钻</td>
+<td>实际交互</td>
+<td>原生图表可访问性、跨期聚合性能验证</td>
+</tr>
+<tr>
+<td>历年账单、12个月收支、年/月下钻</td>
+<td>实际交互</td>
+<td>数据库聚合查询与大金额布局</td>
+</tr>
+<tr>
+<td>总预算、分类预算、预警</td>
+<td>实际交互</td>
+<td>数据库迁移与边界回归</td>
+</tr>
+<tr>
+<td>CSV / JSON 导出与备份恢复</td>
+<td>浏览器文件实现</td>
+<td>Android 文档选择器、分享、原子恢复</td>
+</tr>
+<tr>
+<td>金额隐藏</td>
+<td>界面遮罩</td>
+<td>系统多任务预览、无障碍朗读策略</td>
+</tr>
+<tr>
+<td>离线存储</td>
+<td>localStorage 演示</td>
+<td>私有数据库、磁盘失败和加密策略评估</td>
+</tr>
+<tr>
+<td>云同步、会员、提醒、应用锁</td>
+<td>不提供虚假成功按钮</td>
+<td>P1/P2 单独设计开发</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6">6. 建议评审路径</h2>
+<ol>
+<li>总览核对 2,310.00 元支出与 46.2% 预算。</li>
+<li>点“＋”，选择餐饮，输入 32，保存；总览支出变为 2,342.00。</li>
+<li>打开该条账目并改成 28.50，确认统计同步；再删除，确认恢复初始值。</li>
+<li>在明细搜索“咖啡”，切换日历并选择 11 月 4 日；清除筛选后回到完整月份。</li>
+<li>在图表切换“年”，看 2026 年各月支出；点标题选 2025 年；点 2 月数据点并“查看本月”，核对 2,883.00 元。选择餐饮后核对同周期分类明细。</li>
+<li>调整预算，查看分类分配约束及超支状态。</li>
+<li>导出当前月 CSV 和完整 JSON；修改一笔后恢复 JSON，核对数据回到备份状态。</li>
+<li>进入“历年账单”，展开 2025 年，核对每月收入/支出/结余；点击月份回到对应趋势。切到 2023 年空周期，确认不复用其他年份数据。</li>
+<li>切换到无数据月份，查看空状态；刷新页面确认数据与预算仍保留。图表周期为本次会话状态，刷新默认本月；带 <code>#charts-year</code> 链接则默认年图。</li>
+</ol>
+<h2 id="7-android">7. Android 交接建议</h2>
+<p>先实现纯函数领域层：金额解析、周/月/年范围、日/月聚合、历年收支、分类聚合、均值分母、预算计算、备份校验。之后接数据库与 Compose 页面，使总览、图表、预算订阅同一份有效账目流，避免各页各算一套。网页 <code>stats.js</code> 负责图表页面，<code>domain.js</code> 负责周期和计算。</p>
+<p>需重点测试的不是按钮是否存在，而是记录跨月编辑、恢复中断、重复保存、非法备份与预算分配约束。原型中金额计算/导入校验已有可复用规则，但 JavaScript 实现不能直接视为 Android 生产代码。</p>
+<p>本项目没有 Android Gradle 工程、后端、商店发布或真实支付授权；这些属于下一阶段实现。本次交付完成调研、需求定义与交互验证所需材料。</p></article><div class="footer">禾记 · MyAccount · 2026-11-04 / 可维护源文件为 docs 目录内 Markdown</div></main></body></html>
