@@ -5,7 +5,7 @@ $javaBin = Join-Path $FilmWordRoot '.jdk\jdk-17\bin'
 $outputDirectory = Join-Path $projectRoot 'artifacts\ledger-check'
 New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
 $sourceDirectory = Join-Path $projectRoot 'app\src\main\java\com\simaoqingnian\myaccount'
-$sources = @('Ledger.java','IconCatalog.java','EntrySession.java') | ForEach-Object { Join-Path $sourceDirectory $_ }
+$sources = @('Ledger.java','IconCatalog.java','EntrySession.java','RecentCategories.java') | ForEach-Object { Join-Path $sourceDirectory $_ }
 & (Join-Path $javaBin 'javac.exe') -encoding UTF-8 -d $outputDirectory @sources (Join-Path $PSScriptRoot 'checks\LedgerCheck.java')
 if ($LASTEXITCODE -ne 0) { throw 'Ledger compilation failed.' }
 & (Join-Path $javaBin 'java.exe') -cp $outputDirectory LedgerCheck

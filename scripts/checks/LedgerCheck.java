@@ -1,6 +1,7 @@
 import com.simaoqingnian.myaccount.Ledger;
 import com.simaoqingnian.myaccount.IconCatalog;
 import com.simaoqingnian.myaccount.EntrySession;
+import com.simaoqingnian.myaccount.RecentCategories;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -105,6 +106,18 @@ public final class LedgerCheck {
         rejects(()->session.select(clock.get().plusDays(1)),"remembered date cannot be future");
         rejects(()->session.select(LocalDate.of(1999,12,31)),"remembered date lower bound");
         expect(new EntrySession(clock::get).date().equals(clock.get()),"remembered date is not persisted across sessions");
+        List<String> recent=RecentCategories.select(Collections.emptyList(),"food");recent=RecentCategories.select(recent,"transport");
+        expect(recent.equals(Arrays.asList("transport","food")),"last selected category comes first");
+        recent=RecentCategories.select(recent,"food");expect(recent.equals(Arrays.asList("food","transport")),"reselection moves existing category without duplication");
+        expect(RecentCategories.order(catalog,"expense",Collections.emptyList()).equals(catalog.ofType("expense")),"untouched categories retain original order");
+        List<Ledger.Category> expenseOrder=RecentCategories.order(catalog,"expense",Arrays.asList(writing.id,pet.id,"missing","food",pet.id));
+        expect(expenseOrder.get(0).id.equals(pet.id)&&expenseOrder.get(1).id.equals("food"),"personal category follows recent choice order");
+        expect(expenseOrder.size()==catalog.ofType("expense").size(),"stale ids and duplicate choices do not lose or duplicate projects");
+        expect(expenseOrder.get(2).id.equals("transport"),"remaining built-ins keep stable order");
+        List<Ledger.Category> incomeOrder=RecentCategories.order(catalog,"income",Arrays.asList("food",writing.id,"salary"));
+        expect(incomeOrder.get(0).id.equals(writing.id)&&incomeOrder.stream().allMatch(c->c.type.equals("income")),"income and expense ordering are isolated");
+        expect(catalog.ofType("expense").get(0).id.equals("food"),"ordering does not mutate ledger catalog");
+        List<String> persisted=Arrays.asList(String.join(",",recent).split(","));expect(RecentCategories.order(catalog,"expense",persisted).get(0).id.equals("food"),"persisted choice list retains order");
         System.out.println("Ledger checks passed: "+checks);
     }
 }
