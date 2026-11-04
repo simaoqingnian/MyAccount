@@ -104,7 +104,9 @@ node scripts/verify-prototype.cjs "你的 Playwright 模块绝对路径"
 
 ## GitHub 同步
 
-远端：`git@github.com:simaoqingnian/MyAccount.git`，主分支为 `main`。当前 Windows 工作目录沿用 HappyFarm 的提交身份，通过正在运行的 FastGithub 和本机 OpenSSH 连接 GitHub。
+远端：`git@github.com:simaoqingnian/MyAccount.git`，主分支为 `main`。当前 Windows 工作目录沿用 HappyFarm 的提交身份，使用本机 OpenSSH 和已有密钥认证。
+
+本次 FastGithub 将 `github.com` 解析到本地，其 22 端口转发在 SSH 握手前断开。已仅在本仓库的 `core.sshCommand` 中选用 GitHub SSH 443 线路（当前可达地址 `20.205.243.160`），并以 `HostKeyAlias=github.com` 严格校验已有主机密钥。SSH 认证与推送成功，未修改全局 Git、系统 SSH 或 FastGithub 配置；远端 URL 保持不变。该线路属于当前电脑的本地配置，未进入源码；后续如地址变化，可重新选择可达的 SSH 线路。
 
 后续在当前目录提交并推送：
 
