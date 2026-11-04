@@ -76,7 +76,7 @@ validation = f'''# 原型验证记录
 - 浏览器验证 **{len(report['checks'])} / {len(report['checks'])} 通过**：真实浏览器执行点击、填表、下载、恢复和截图。
 - 未捕获页面 JavaScript 错误：**0**。
 - 桌面画布 1440 × 1000；手机截图 390 × 844；另验证 360 / 430px 宽度主流程无横向溢出。
-- 合并 PDF：**{len(pdf.pages)} 页**；检查了中文文本可提取，调研、PRD、交接和金额规则均存在。
+- 当前合并 PDF：**{len(pdf.pages)} 页**；检查了中文文本可提取，调研、PRD、交接和金额规则均存在。原型阶段为 13 页，后续补入 Android 开发说明；原生验证范围见《05-Android开发与打包说明》。
 - 已人工查看桌面总览、手机记账、年度图表及历史账单截图，确认主要文字、按钮、图表和键盘可见。
 
 ## 浏览器验证项目
@@ -101,12 +101,15 @@ validation = f'''# 原型验证记录
 '''
 (ROOT / 'docs' / '04-验证记录.md').write_text(validation, encoding='utf-8')
 
-archive = ROOT / '禾记-需求与原型-v0.2.zip'
+archive = ROOT / '禾记-Android与需求-0.1.0.zip'
 with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED) as z:
-    for name in ['index.html', 'README.md']:
+    for name in ['index.html', 'README.md', '.gitignore', '.gitattributes', 'build.gradle', 'settings.gradle', 'gradle.properties', 'gradlew', 'gradlew.bat']:
         z.write(ROOT / name, name)
-    for directory in ['docs', 'prototype', 'design', 'scripts']:
+    for directory in ['docs', 'prototype', 'design', 'scripts', 'app', 'gradle']:
         for file in sorted((ROOT / directory).rglob('*')):
-            if file.is_file() and file.name != 'verification-failure.png' and '__pycache__' not in file.parts:
+            if file.is_file() and file.name != 'verification-failure.png' and '__pycache__' not in file.parts and 'build' not in file.relative_to(ROOT).parts:
                 z.write(file, file.relative_to(ROOT).as_posix())
+    apk = ROOT / 'artifacts' / 'Heji-0.1.0-debug.apk'
+    if apk.is_file():
+        z.write(apk, apk.relative_to(ROOT).as_posix())
 print(json.dumps({'pdf_pages': len(pdf.pages), 'pdf_page_text_lengths': [len(p.extract_text() or '') for p in pdf.pages], 'board_size': board.size, 'zip_bytes': archive.stat().st_size, 'pdf_content_check': 'passed', 'local_links': 'passed'}, ensure_ascii=True))

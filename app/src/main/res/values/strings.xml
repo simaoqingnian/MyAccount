@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">禾记</string>
+    <string name="save_error">未保存：%1$s</string>
+</resources>

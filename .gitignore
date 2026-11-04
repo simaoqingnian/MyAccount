@@ -19,3 +19,14 @@ __pycache__/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Android local toolchain, build output and signing identity
+.gradle/
+.android/
+local.properties
+**/build/
+artifacts/
+*.apk
+*.aab
+*.iml
+.idea/

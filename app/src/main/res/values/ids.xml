@@ -1,0 +1,9 @@
+<resources>
+    <item name="action_add" type="id" />
+    <item name="entry_amount" type="id" />
+    <item name="entry_note" type="id" />
+    <item name="entry_save" type="id" />
+    <item name="main_content" type="id" />
+    <item name="main_header" type="id" />
+    <item name="search" type="id" />
+</resources>

@@ -2,7 +2,7 @@
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#f4f5ee;color:#283d34;font-family:"Microsoft YaHei","Segoe UI",sans-serif;font-size:14px;line-height:1.9}nav{position:sticky;top:0;z-index:3;background:#174e42;color:#fff;padding:16px 5%;display:flex;gap:28px;align-items:center;font-size:12px}nav a{color:#fff;text-decoration:none}nav strong{font-size:17px;margin-right:auto}main{max-width:1050px;margin:38px auto;padding:0 28px}.cover{padding:28px 0 36px;border-bottom:1px solid #cdd9c5}.cover small{letter-spacing:2px;color:#697b61}.cover h1{font-size:40px;font-weight:500;line-height:1.45}.cover p{color:#6d7968}article{scroll-margin-top:80px;padding:20px 0 45px}article+article{border-top:2px solid #174e42}h1{font-size:29px;margin:28px 0 22px}h2{font-size:21px;color:#174e42;margin:36px 0 16px}h3{font-size:17px;margin:28px 0 12px}p{margin:12px 0}table{border-collapse:collapse;width:100%;font-size:12px;margin:20px 0;line-height:1.8}th,td{border:1px solid #d5decf;padding:10px 12px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#e4ecdc;color:#214937;font-weight:600}tbody tr:nth-child(even){background:#eef2e8}a{color:#326950;text-underline-offset:3px}li{padding:3px 0}code{background:#e8eddf;padding:2px 5px;border-radius:4px;font-family:Consolas,monospace;font-size:.9em;overflow-wrap:anywhere}pre{white-space:pre-wrap;background:#e8eddf;padding:18px;border-radius:12px;line-height:1.6;overflow:auto}pre code{padding:0}blockquote{border-left:3px solid #93ad84;margin:20px 0;padding:0 18px}img{max-width:100%}.print-button{border:1px solid #ffffff80;background:none;color:white;padding:6px 12px;border-radius:6px;cursor:pointer;font:inherit}.flow{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0;padding:20px;background:#e8efdf;border-radius:12px}.flow span{background:white;border:1px solid #b5c9a7;border-radius:8px;padding:9px 14px;font-size:12px}.flow i{align-self:center;font-style:normal;color:#6d865c}.footer{padding:25px 0;color:#74846b;font-size:11px}
 @media(max-width:700px){nav{gap:12px;flex-wrap:wrap;padding:12px 18px}nav strong{width:100%}main{padding:0 17px;margin-top:20px}.cover h1{font-size:30px}h1{font-size:25px}table{display:block;overflow:auto}th,td{min-width:100px}.print-button{display:none}}
 @media print{@page{size:A4;margin:16mm 13mm 18mm}body{background:white;font-size:10px;line-height:1.7}nav{display:none}main{max-width:none;margin:0;padding:0}.cover{break-after:page;padding:30mm 0 0;border:0}.cover h1{font-size:32px}.cover img{margin-top:25px;width:100%}article{padding:0;scroll-margin:0}article+article{break-before:page;border:0}h1{font-size:23px}h2{font-size:16px;margin-top:22px}h3{font-size:13px}h1,h2,h3{break-after:avoid}table{font-size:9px;line-height:1.6;display:table}th,td{padding:6px;min-width:0}tr{break-inside:avoid}thead{display:table-header-group}pre{font-size:9px;break-inside:avoid}a{color:#28543d;text-decoration:none}.flow{break-inside:avoid}p{orphans:3;widows:3}.footer{display:none}}
-</style></head><body><nav><strong>禾记 / 产品文档</strong><a href="#research">竞品调研</a><a href="#prd">MVP 需求</a><a href="#design">原型交接</a><a href="../prototype/index.html">打开原型 ↗</a><button class="print-button" onclick="window.print()">打印 / PDF</button></nav><main><section class="cover"><small>MYACCOUNT / PRODUCT REQUIREMENTS V0.2</small><h1>禾记个人记账 APP<br>调研、需求与设计说明</h1><p>Android 优先 · 离线个人记账 MVP<br>2026 年 11 月 4 日 · 用户已确认 MVP 方向</p><p>包含官方功能证据、业务规则、开发拆分、验收条件与原型交接。<br>本次交付为需求和网页原型，尚未构建原生 Android 应用。</p><img src="../design/sunburst-concept.png" alt="Sunburst 原创视觉探索"><p style="font-size:10px">封面图为 AI 视觉探索，具体金额、日期和功能以本文需求及交互原型为准。</p></section><article id="research"><h1 id="_1">鲨鱼记账功能调研</h1>
+</style></head><body><nav><strong>禾记 / 产品文档</strong><a href="#research">竞品调研</a><a href="#prd">MVP 需求</a><a href="#design">原型交接</a><a href="#android">Android 开发</a><a href="../prototype/index.html">打开原型 ↗</a><button class="print-button" onclick="window.print()">打印 / PDF</button></nav><main><section class="cover"><small>MYACCOUNT / PRODUCT & ANDROID DELIVERY</small><h1>禾记个人记账 APP<br>调研、需求与设计说明</h1><p>Android 优先 · 离线个人记账 MVP<br>2026 年 11 月 4 日 · 用户已确认 MVP 方向</p><p>包含官方功能证据、业务规则、开发拆分、验收条件与原型交接。<br>已提供原生 Android 0.1.0 调试 APK；按用户要求未安装测试。</p><img src="../design/sunburst-concept.png" alt="Sunburst 原创视觉探索"><p style="font-size:10px">封面图为 AI 视觉探索，具体金额、日期和功能以本文需求及交互原型为准。</p></section><article id="research"><h1 id="_1">鲨鱼记账功能调研</h1>
 <p>调研日期：2026-11-04（中国标准时间） · 对象：官方鲨鱼记账 Android / iOS 普通版、iOS Pro · 方法：官网、开发者在应用商店发布的介绍；图表栏目补充参考有明确体验环境的历史体验报告及教程，并单独标注证据等级。未安装登录实测，未购买会员；下文的“已确认”仅代表官方公开资料支持。</p>
 <h2 id="1">1. 调研结论</h2>
 <p>鲨鱼记账值得借鉴的主线是：缩短日常录入路径，用明细和图表反馈消费，再以预算和提醒帮助坚持记账。对于本项目，建议围绕这条主线开发 Android 个人记账 MVP，暂不引入社交、订阅、自动识别和复杂资产管理。</p>
@@ -244,7 +244,7 @@
 </tr>
 </tbody>
 </table>
-<p>以上是待验收目标，不代表当前 HTML 原型或尚未开发的 Android 应用已经达到。</p>
+<p>以上是待验收目标，不代表当前 HTML 原型或 Android 首版已经达到；原生开发状态与实际验证范围见《05-Android开发与打包说明》。</p>
 <h2 id="2">2. 用户故事</h2>
 <table>
 <thead>
@@ -687,7 +687,7 @@
 </tr>
 </tbody>
 </table>
-<p>建议 Android 工程：Kotlin + Jetpack Compose；Room 负责账目，DataStore 负责偏好，ViewModel + StateFlow 驱动 UI，Repository 隔离存储。此处是架构建议，尚未创建 Android 工程，具体依赖版本在开工时确认。</p>
+<p>原型阶段建议过 Kotlin + Jetpack Compose / Room。根据后续“复用 FilmWord 开发环境”的要求，首版现已采用 Java 原生 View + SQLiteOpenHelper，JDK 17、Gradle 8.7、AGP 8.6.1、compile / target SDK 35，最低 API 26。金额、日期、统计与预算规则集中在独立 <code>Ledger</code> 领域层，所有数据库操作在进程内同一工作队列执行，界面读取统一账本快照。实际实现和构建说明见《05-Android开发与打包说明》；本节工作量是原型阶段估算，不代表本次实际工时或验收结论。</p>
 <h2 id="10">10. 首发验收门槛</h2>
 <ol>
 <li>P0 主路径可在飞行模式完成，重启后账目不丢。</li>
@@ -697,7 +697,7 @@
 <li>原生无强制注册，无假云同步状态，无未实现的会员入口。</li>
 <li>将原型演示数据从正式安装包初始化流程中移除；正式新用户以空账本开始。</li>
 </ol>
-<p>开发前需要收敛但不阻塞本次设计的事项：最终品牌名；Android 最低兼容版本；是否首发加入 P1 的应用锁与提醒；是否保留全部预置类别。MVP 方向已由用户确认，其他均采用上述建议值。</p></article><article id="design"><h1 id="_1">禾记原型设计与开发交接</h1>
+<p>首版采用临时品牌“禾记”、最低 Android 8.0、全部预置类别；P1 的应用锁与提醒未纳入。最终品牌与商店发布策略仍可在后续确定。MVP 方向已由用户确认。</p></article><article id="design"><h1 id="_1">禾记原型设计与开发交接</h1>
 <p>版本：v0.2 · 日期：2026-11-04 · 类型：高保真可交互网页原型 + 独立视觉概念图；已补齐历史图表</p>
 <h2 id="1">1. 交付物与使用</h2>
 <ul>
@@ -903,6 +903,279 @@
 <li>切换到无数据月份，查看空状态；刷新页面确认数据与预算仍保留。图表周期为本次会话状态，刷新默认本月；带 <code>#charts-year</code> 链接则默认年图。</li>
 </ol>
 <h2 id="7-android">7. Android 交接建议</h2>
-<p>先实现纯函数领域层：金额解析、周/月/年范围、日/月聚合、历年收支、分类聚合、均值分母、预算计算、备份校验。之后接数据库与 Compose 页面，使总览、图表、预算订阅同一份有效账目流，避免各页各算一套。网页 <code>stats.js</code> 负责图表页面，<code>domain.js</code> 负责周期和计算。</p>
+<p>原型阶段先约定独立领域层：金额解析、周/月/年范围、日/月聚合、历年收支、分类聚合、均值分母、预算计算、备份校验。网页 <code>stats.js</code> 负责图表页面，<code>domain.js</code> 负责周期和计算。后续原生实现采用 Java <code>Ledger</code> + SQLite + 原生 View，总览、图表、预算共用账本快照，具体文件与环境见《05-Android开发与打包说明》。</p>
 <p>需重点测试的不是按钮是否存在，而是记录跨月编辑、恢复中断、重复保存、非法备份与预算分配约束。原型中金额计算/导入校验已有可复用规则，但 JavaScript 实现不能直接视为 Android 生产代码。</p>
-<p>本项目没有 Android Gradle 工程、后端、商店发布或真实支付授权；这些属于下一阶段实现。本次交付完成调研、需求定义与交互验证所需材料。</p></article><div class="footer">禾记 · MyAccount · 2026-11-04 / 可维护源文件为 docs 目录内 Markdown</div></main></body></html>
+<p>本文件记录 v0.2 网页原型的设计和验证边界。项目现已新增 Android Gradle 工程及 0.1.0 调试 APK；按用户要求未安装测试。本文中的浏览器截图与交互结果不能作为原生应用的真机验证结果。后端、商店发布及真实支付授权不在首版范围内。</p></article><article id="android"><h1 id="android">禾记 Android 首版开发与打包说明</h1>
+<p>开发日期：2026-11-04。依据已确认的个人日常记账 MVP 与 v0.2 原型，复用 FilmWord 的本地 Android 工具链。用户明确要求“你不用安装测试”，本次未向手机或模拟器安装应用。</p>
+<h2 id="1">1. 安装包</h2>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>应用名称</td>
+<td>禾记</td>
+</tr>
+<tr>
+<td>APK</td>
+<td><code>artifacts/Heji-0.1.0-debug.apk</code></td>
+</tr>
+<tr>
+<td>类型</td>
+<td>已签名的调试 APK，非商店发行包</td>
+</tr>
+<tr>
+<td>版本</td>
+<td><code>0.1.0</code> / versionCode <code>1</code></td>
+</tr>
+<tr>
+<td>包名</td>
+<td><code>com.simaoqingnian.myaccount</code></td>
+</tr>
+<tr>
+<td>最低系统</td>
+<td>Android 8.0 / API 26</td>
+</tr>
+<tr>
+<td>编译 / 目标 SDK</td>
+<td>35 / 35</td>
+</tr>
+<tr>
+<td>文件大小</td>
+<td>76,534 字节，约 74.7 KiB</td>
+</tr>
+<tr>
+<td>架构</td>
+<td>纯 Java / DEX，无 CPU 架构专用原生库</td>
+</tr>
+<tr>
+<td>权限</td>
+<td>APK 中没有 <code>uses-permission</code> 声明</td>
+</tr>
+<tr>
+<td>SHA-256</td>
+<td><code>64076074EB941B77FF246224256335BCFD93074FAEC43A5120C9B31352337BD5</code></td>
+</tr>
+</tbody>
+</table>
+<p>APK 由原生 View、Canvas 和 SQLite 实现，没有 WebView 包装网页、联网服务或外部运行时依赖。体积较小是因为没有引入第三方运行库或大图片资源。</p>
+<p>APK 与 <code>artifacts</code> 目录仅保留在当前电脑，不纳入 Git。源码和构建脚本纳入仓库。文档中的签名和文件哈希对应本次构建；重新生成签名或修改源码后，哈希可能改变。</p>
+<h2 id="2-mvp">2. 已实现的 MVP</h2>
+<table>
+<thead>
+<tr>
+<th>页面 / 流程</th>
+<th>首版行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>总览</td>
+<td>按所选月份显示收入、支出、结余、预算使用情况及最近六笔账目</td>
+</tr>
+<tr>
+<td>记一笔</td>
+<td>收入 / 支出切换、12 个支出类别和 4 个收入类别、金额键盘、备注、账目日期、本地保存</td>
+</tr>
+<tr>
+<td>详情</td>
+<td>查看账目、编辑金额 / 类别 / 日期 / 备注、确认后删除；联动重算统计和预算</td>
+</tr>
+<tr>
+<td>明细</td>
+<td>月份选择、关键词搜索、收支类型与类别组合筛选、按日分组、每次加载 80 笔</td>
+</tr>
+<tr>
+<td>日历</td>
+<td>按月展示每天收支，点击日期查看该日账目，支持清除筛选</td>
+</tr>
+<tr>
+<td>周 / 月 / 年图表</td>
+<td>收入和支出分别查看；自然周从周一开始，月图按日、年图按月；周期总额、日均 / 月均、趋势点与分类排行</td>
+</tr>
+<tr>
+<td>历史周期</td>
+<td>可选择 2000 年至今的历史年份 / 月份，支持相邻周期切换、年度月份下钻、单日与分类明细</td>
+</tr>
+<tr>
+<td>历年账单</td>
+<td>按年显示收入 / 支出 / 结余，展开全年 12 个月；点月份进入月图，点年度入口进入年图</td>
+</tr>
+<tr>
+<td>分类占比</td>
+<td>同周期分类排行、占比圆环、金额与百分比文字说明</td>
+</tr>
+<tr>
+<td>预算</td>
+<td>按月设置总预算和支出分类预算，分类合计不得超过总额；显示使用比例、超支和本月日均可用额</td>
+</tr>
+<tr>
+<td>金额隐藏</td>
+<td>持久保存隐藏偏好，总览、明细、图表数值和预算同步遮罩</td>
+</tr>
+<tr>
+<td>CSV 导出</td>
+<td>导出当前选择月份的全部账目，不受搜索 / 分类筛选影响；UTF-8 BOM、引号转义及公式前缀防护</td>
+</tr>
+<tr>
+<td>完整备份 / 恢复</td>
+<td>系统文件选择器导出 JSON，导入时校验并展示笔数和预算月份，用户确认后事务替换</td>
+</tr>
+<tr>
+<td>恢复前备份</td>
+<td>恢复或载入演示前自动保留原账本；“我的 → 导出恢复前备份”可另存</td>
+</tr>
+<tr>
+<td>演示数据</td>
+<td>初始为空账本；“我的 → 载入演示账目”可追加近三年虚构账目，保留原账目、预算和设置</td>
+</tr>
+</tbody>
+</table>
+<p>“历年账单”从实际最早账目年份展示到今年，中间无记录年份和历史月份显示 0；未来月份显示「—」。趋势页可以主动选取更早的空周期，不会沿用其他月份的数据。当前周 / 月 / 年的平均值按截至当天的已历自然日 / 月计算，包含零记录时段；未来时段不参与均值。</p>
+<p>Android 使用手机系统日期，网页原型固定演示日期为 2026-11-04。Android 首次启动不会自动创建任何虚构账目。实际操作和布局仍需后续设备验证，本节描述已接入的代码行为。</p>
+<h2 id="3">3. 数据与可靠性处理</h2>
+<p>金额以人民币整数“分”保存，单笔范围为 0.01–999,999,999.99 元；不接受超过两位小数、负数、零或科学计数法。日期须在 2000-01-01 至系统当天之间；备注最多 100 个 Unicode 码点。当前账本限制为 10,000 笔。</p>
+<p>SQLite 数据库位于应用私有目录，建有日期索引并启用 WAL。单笔保存和完整恢复使用数据库事务；所有数据库操作进入进程内同一工作队列，避免 Activity 重建时读操作越过先前写操作。录入保存按钮有重复点击保护，开始保存前固定账目 ID，旋转重建后再次保存仍使用同一 ID。页面状态和未保存输入通过实例状态恢复。</p>
+<p>备份采用与网页原型一致的 <code>schemaVersion: 1</code>，字段包括全部账目、各月预算、金额隐藏设置。导入先限制文件大小为 10 MiB、校验 UTF-8、字段类型、金额整数、日期、类别、重复 ID、时间戳与预算合计；校验失败时不替换数据。校验成功后仍需用户确认。恢复前使用 <code>AtomicFile</code> 写入私有 <code>before-restore.json</code>，成功后才开始替换数据库；事务失败时回滚。恢复前备份只保留最近一次，可在“我的”导出。</p>
+<p>CSV 和 JSON 使用 Android 系统文档选择器保存 / 打开，不申请广泛存储权限。备份和导出内容包含真实金额，金额隐藏只影响界面；导出前有明确说明。关闭系统自动备份和设备迁移，账本迁移通过显式 JSON 导出 / 恢复完成。备份为明文，应用私有数据库未另加数据库级加密。</p>
+<h2 id="4-filmword">4. 复用 FilmWord 开发环境</h2>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>使用位置 / 版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JDK</td>
+<td><code>D:\03_work\09_android\FilmWord\.jdk\jdk-17</code></td>
+</tr>
+<tr>
+<td>Android SDK</td>
+<td><code>D:\03_work\09_android\FilmWord\.android-sdk</code></td>
+</tr>
+<tr>
+<td>Android 平台</td>
+<td><code>platforms/android-35</code></td>
+</tr>
+<tr>
+<td>Build Tools</td>
+<td>本次打包与签名核验使用已缓存的 35.0.0</td>
+</tr>
+<tr>
+<td>Gradle</td>
+<td>8.7，复用用户缓存中已解压的分发包</td>
+</tr>
+<tr>
+<td>Android Gradle Plugin</td>
+<td>8.6.1，与 FilmWord 一致</td>
+</tr>
+<tr>
+<td>依赖缓存</td>
+<td>优先 <code>%USERPROFILE%\.gradle</code> 中已有的完整 AGP / Lint 缓存；否则选 FilmWord 的 <code>.gradle</code></td>
+</tr>
+</tbody>
+</table>
+<p>复制了 FilmWord 的 Gradle Wrapper 文件并沿用其 Java 原生开发方式。未复制 FilmWord 的业务代码、数据库、账号凭据或发布签名，也未修改 FilmWord 项目配置。</p>
+<p>当前电脑默认 Java 是旧版本，且 Wrapper 重新下载 Gradle 时曾遇到网络证书握手失败。因此构建脚本显式选择 FilmWord 的 JDK 17，并优先启动本机已缓存的 Gradle 8.7；不更改系统 Java 或证书信任库。FilmWord 缓存缺少的 Lint 31.6.1 已直接复用用户缓存，无需重新下载。</p>
+<p>项目独立生成 <code>.android/debug.keystore</code>，使用 Android 调试签名参数。该文件已被 Git 忽略，应在本机保留以便后续同签名覆盖安装；在其他电脑重新生成密钥后，无法直接覆盖当前签名的安装包。正式发行需另行配置发布签名。</p>
+<h2 id="5">5. 构建与源码</h2>
+<p>在项目根目录执行：</p>
+<pre><code class="language-powershell">powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-android.ps1
+</code></pre>
+<p>脚本检查现有工具链、设置仅当前进程的环境变量、生成 <code>local.properties</code> 和独立调试密钥，执行离线 <code>:app:assembleDebug :app:lintDebug</code>，全部成功后复制 APK 到 <code>artifacts</code> 并输出 SHA-256。没有安装、启动应用或连接设备的步骤。</p>
+<p>自定义 FilmWord 路径、缓存或允许在线获取缺失依赖：</p>
+<pre><code class="language-powershell">powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-android.ps1 -FilmWordRoot 'D:\路径\FilmWord' -GradleCacheRoot 'D:\缓存\.gradle' -Online
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>源文件</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>app/src/main/java/com/simaoqingnian/myaccount/Ledger.java</code></td>
+<td>金额 / 日期校验、分类、周期、聚合、预算规则、CSV 和演示账目</td>
+</tr>
+<tr>
+<td><code>LedgerStore.java</code>（同目录）</td>
+<td>SQLite 表结构、读写事务、统一工作队列、恢复前备份</td>
+</tr>
+<tr>
+<td><code>BackupCodec.java</code>（同目录）</td>
+<td>原型兼容 JSON 序列化与严格导入校验</td>
+</tr>
+<tr>
+<td><code>MainActivity.java</code>（同目录）</td>
+<td>总览、明细、图表、历年账单、预算、系统文件导入导出</td>
+</tr>
+<tr>
+<td><code>EntryActivity.java</code>（同目录）</td>
+<td>新增 / 编辑表单、数字键盘、日期、草稿与保存保护</td>
+</tr>
+<tr>
+<td><code>Ui.java</code>、<code>TrendChart.java</code>（同目录）</td>
+<td>视觉令牌、原生控件、图标、系统边距、趋势 Canvas</td>
+</tr>
+<tr>
+<td><code>scripts/build-android.ps1</code></td>
+<td>复用环境编译、Lint、复制 APK</td>
+</tr>
+<tr>
+<td><code>scripts/check-ledger.ps1</code>、<code>scripts/checks/LedgerCheck.java</code></td>
+<td>桌面纯 Java 账务规则检查</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6">6. 本次实际验证结果</h2>
+<table>
+<thead>
+<tr>
+<th>检查</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Java 编译、资源处理、DEX 与 APK 打包</td>
+<td><code>:app:assembleDebug</code> 通过</td>
+</tr>
+<tr>
+<td>Android Lint</td>
+<td><code>:app:lintDebug</code> 通过，0 错误、0 警告</td>
+</tr>
+<tr>
+<td>桌面账务规则</td>
+<td>24 项通过：金额精度和边界、非法 / 未来日期、当前收支、年总额等于各月合计、均值分母、历史分类汇总、空年度、跨年周、预算约束、CSV、筛选</td>
+</tr>
+<tr>
+<td>APK 签名</td>
+<td><code>apksigner verify --verbose --print-certs</code> 通过，v2 签名，RSA 2048 位</td>
+</tr>
+<tr>
+<td>包信息</td>
+<td><code>aapt dump badging</code> 核对名称、包名、版本、minSdk 26 / targetSdk 35</td>
+</tr>
+<tr>
+<td>权限</td>
+<td><code>aapt dump permissions</code> 没有权限声明</td>
+</tr>
+<tr>
+<td>手机 / 模拟器安装与运行</td>
+<td>按用户要求未执行</td>
+</tr>
+</tbody>
+</table>
+<p>本次修复了 Lint 检出的 Android 8.0 导航栏样式兼容问题：API 26 使用深色导航栏与白色图标，API 27 及以上采用浅色背景与深色图标。</p>
+<p>可复现桌面检查：</p>
+<pre><code class="language-powershell">powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-ledger.ps1
+</code></pre>
+<p>以上验证不能替代原生界面的设备验收。文件选择器实际往返、软键盘 / 系统返回、旋转与进程回收、SQLite 异常恢复、不同系统与字体大小、1 万笔性能和无障碍服务尚未实机验证。原型的浏览器验证记录独立保留在《04-验证记录》，不计作 Android 验证。</p>
+<p>首版未包含云同步、自动支付抓取、OCR、资产账户 / 转账、多账本、应用锁、系统提醒、会员、服务端或商店发布。</p></article><div class="footer">禾记 · MyAccount · 2026-11-04 / 可维护源文件为 docs 目录内 Markdown</div></main></body></html>

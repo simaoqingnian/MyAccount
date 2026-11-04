@@ -1,6 +1,12 @@
-# 禾记 · 个人记账 APP 需求与原型
+# 禾记 · 个人记账 APP
 
-本项目交付：鲨鱼记账公开资料调研、Android 个人记账 MVP 需求、高保真可交互网页原型、Sunburst 视觉概念图。调研日期为 2026-11-04；用户已确认优先个人日常记账 MVP。
+本项目包含鲨鱼记账公开资料调研、个人记账 MVP 需求、可交互网页原型、Sunburst 视觉概念图，以及基于原型开发的 **Android 原生应用**。调研与首版开发日期为 2026-11-04；用户已确认优先个人日常记账 MVP。
+
+**APK：[artifacts/Heji-0.1.0-debug.apk](artifacts/Heji-0.1.0-debug.apk)**。包名 `com.simaoqingnian.myaccount`，版本 `0.1.0 (1)`，支持 Android 8.0 / API 26 及以上，使用本项目独立的调试签名。APK 是本地构建产物，未提交到 Git；克隆仓库后可按下方命令生成。
+
+需要一起带走源码、APK、需求和原型时，可使用本地交付包 [禾记-Android与需求-0.1.0.zip](禾记-Android与需求-0.1.0.zip)（不含本地 SDK、缓存和签名密钥）。执行 `python scripts/package-delivery.py` 可重新生成。
+
+应用采用 Java 原生界面与 SQLite 私有数据库，复用 FilmWord 的 JDK 17、Android SDK 35，以及当前电脑缓存中的 Gradle 8.7 / Android Gradle Plugin 8.6.1。首次启动为空账本，使用手机的真实日期；在“我的 → 载入演示账目”可追加近三年的虚构数据。按用户要求，**没有安装到手机或模拟器测试**。构建、静态检查及桌面账务规则验证的具体结果见 [Android 开发与打包说明](docs/05-Android开发与打包说明.md)。
 
 **v0.2 已补齐鲨鱼记账式图表组织：周/月/年趋势、历史年份和月份选择、分类排行、历年收支账单。** [直接打开年度图表](prototype/index.html#charts-year) · [直接打开历年账单](prototype/index.html#charts-history)。
 
@@ -8,6 +14,9 @@
 
 | 文件 | 用途 |
 |---|---|
+| [artifacts/Heji-0.1.0-debug.apk](artifacts/Heji-0.1.0-debug.apk) | 本地生成的 Android 安装包 |
+| [docs/05-Android开发与打包说明.md](docs/05-Android开发与打包说明.md) | 已实现功能、环境复用、构建命令、验证范围 |
+| [app/src/main](app/src/main) | 原生 Java 界面、SQLite 存储及 Android 资源 |
 | [prototype/index.html](prototype/index.html) | 可点击、可记账、可编辑、可导出恢复的交互原型 |
 | [docs/需求与设计说明.html](docs/需求与设计说明.html) | 合并的调研、PRD 与设计说明，浏览器阅读 |
 | [docs/需求与设计说明.pdf](docs/需求与设计说明.pdf) | 可分享/打印的文档 |
@@ -28,20 +37,45 @@
 
 已使用过原型的浏览器会保留已有账目，不自动注入历史样本。若未看到历史数据，进入“图表 → 历年账单”，点击“添加历史演示账目”并确认，可保留原账目后追加。也可在“我的”确认重置为最新完整样本。数据仅保存在当前浏览器 `localStorage`，请使用同一浏览器、同一文件路径继续体验。
 
-本次不是 Android APK，不含云同步、会员、自动支付抓取、OCR 或生物识别。AI 图是视觉参考，生成图中数值/文字不作为规格；交互原型和 PRD 才是开发依据。
+网页原型和 Android 应用分别保存数据；可通过完整 JSON 备份迁移账目、预算及金额隐藏设置。网页固定演示日期，Android 使用系统日期，导入日期不得晚于手机当天。两者均不含云同步、会员、自动支付抓取、OCR 或生物识别。AI 图是视觉参考，生成图中数值/文字不作为规格。
+
+## 构建 Android APK
+
+当前电脑在项目目录执行以下命令即可离线编译并运行 Lint 静态检查，全程不安装应用：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-android.ps1
+```
+
+脚本自动定位 `D:\03_work\09_android\FilmWord\.jdk\jdk-17` 和 `.android-sdk`，选择现有 Gradle 缓存，生成本项目的 `local.properties` 与 `.android/debug.keystore`，最后输出到 `artifacts/Heji-0.1.0-debug.apk`。环境、签名文件和构建产物均不进入 Git。复用的只是工具链，本项目没有 FilmWord 的业务代码或数据。
+
+FilmWord 目录或缓存目录不同时可以指定参数；`-Online` 允许 Gradle 获取缺失依赖：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-android.ps1 -FilmWordRoot 'D:\你的路径\FilmWord' -GradleCacheRoot 'D:\你的缓存\.gradle'
+```
+
+纯 Java 账务规则可在桌面检查，不连接设备：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-ledger.ps1
+```
 
 ## 文件结构
 
 ```text
 MyAccount/
   index.html                  交付入口
+  app/                        Android 原生界面 / SQLite / 资源
+  gradle/                     Gradle 8.7 Wrapper
+  artifacts/                  APK 与本地检查产物（Git 忽略）
   docs/                       调研、PRD、交接、合并 HTML/PDF、验证记录
   prototype/                  无外部运行依赖的 HTML / CSS / JavaScript
     domain.js                 金额、校验、聚合、导出和演示数据
     app.js                    页面与交互
     stats.js                  周/月/年图表、历年账单和统计下钻
   design/                     Sunburst 概念图、提示词、实际原型截图
-  scripts/                    文档构建和有意义的规则/浏览器验证
+  scripts/                    APK 构建、桌面账务检查、文档与原型验证
 ```
 
 ## 维护与验证
@@ -52,7 +86,7 @@ MyAccount/
 node --test scripts/domain.test.cjs
 ```
 
-文档 HTML 从 3 份 Markdown 构建，需 Python 的 `markdown` 模块：
+文档 HTML 从调研、PRD、原型交接和 Android 说明 Markdown 构建，需 Python 的 `markdown` 模块：
 
 ```powershell
 python scripts/build-docs.py
@@ -66,7 +100,7 @@ node scripts/verify-prototype.cjs "你的 Playwright 模块绝对路径"
 
 脚本默认查找 Windows Chrome；如需其他环境，可设置 `HEJI_BROWSER_PATH`。它在独立浏览器上下文中运行演示数据，不读取日常浏览器资料。脚本同时输出桌面/手机截图、JSON 验证记录与文档 PDF。
 
-推荐后续顺序：评审 P0 → 建立 Android 原生数据层 → 记账闭环 → 查询分析 → 预算与备份 → 数据可靠性和设备兼容测试。
+原生首版已接入记账闭环、查询分析、历史图表、预算和文件备份。后续按需要开展真机界面、文件选择器、进程恢复及不同系统版本的兼容验证；这些结果不包含在本次交付中。
 
 ## GitHub 同步
 
@@ -80,4 +114,4 @@ git commit -m "Describe the change"
 git push
 ```
 
-文档、PDF、设计图片、原型和验证脚本均纳入版本管理。根目录的 ZIP 为可重新生成的本地交付包，已通过 `.gitignore` 排除；本地密钥与代理配置不进入仓库。
+Android 源码、文档、PDF、设计图片、原型和维护脚本均纳入版本管理。APK、构建缓存、环境路径、签名文件及根目录 ZIP 已通过 `.gitignore` 排除；本地密钥与代理配置不进入仓库。
