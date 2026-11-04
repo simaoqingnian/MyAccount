@@ -7,7 +7,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Typeface;
+import android.graphics.ColorFilter;
+import android.graphics.PixelFormat;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
@@ -24,6 +27,19 @@ public final class Ui {
     public static int color(String hex){return Color.parseColor(hex);}
     public static GradientDrawable background(int color,int radius,Context c){GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(dp(c,radius));return d;}
     public static GradientDrawable border(int fill,int radius,Context c){GradientDrawable d=background(fill,radius,c);d.setStroke(dp(c,1),LINE);return d;}
+    /** A row owns only its bottom separator, exactly one physical pixel thick. */
+    public static void listItem(View row,int fill){row.setBackground(new RippleDrawable(ColorStateList.valueOf(0x1A174E42),new ListItemBackground(fill),null));}
+    private static final class ListItemBackground extends Drawable {
+        private final int fill;private final Paint paint=new Paint();private int alpha=255;
+        ListItemBackground(int fill){this.fill=fill;}
+        @Override public void draw(Canvas canvas){
+            android.graphics.Rect bounds=getBounds();paint.setColor(fill);paint.setAlpha(Color.alpha(fill)*alpha/255);canvas.drawRect(bounds,paint);
+            paint.setColor(LINE);paint.setAlpha(alpha);canvas.drawRect(bounds.left,bounds.bottom-1,bounds.right,bounds.bottom,paint);
+        }
+        @Override public void setAlpha(int value){alpha=value;invalidateSelf();}
+        @Override public void setColorFilter(ColorFilter filter){paint.setColorFilter(filter);invalidateSelf();}
+        @Override public int getOpacity(){return alpha==255&&Color.alpha(fill)==255?PixelFormat.OPAQUE:PixelFormat.TRANSLUCENT;}
+    }
     public static void pad(View v,int l,int t,int r,int b){Context c=v.getContext();v.setPadding(dp(c,l),dp(c,t),dp(c,r),dp(c,b));}
     public static LinearLayout column(Context c){LinearLayout l=new LinearLayout(c);l.setOrientation(LinearLayout.VERTICAL);return l;}
     public static LinearLayout row(Context c){LinearLayout l=new LinearLayout(c);l.setOrientation(LinearLayout.HORIZONTAL);l.setGravity(Gravity.CENTER_VERTICAL);return l;}

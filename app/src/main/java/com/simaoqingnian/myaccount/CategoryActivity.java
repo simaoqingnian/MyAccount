@@ -80,8 +80,8 @@ public final class CategoryActivity extends Activity {
                 row.setFocusable(true);
                 row.setOnClickListener(v -> showEditor(this, store, data, type, c, saved -> reload()));
             }
+            Ui.listItem(row, Ui.PAPER);
             content.addView(row);
-            Ui.divider(content);
         }
         scroll.addView(content);
         root.addView(scroll, new LinearLayout.LayoutParams(-1, 0, 1));
