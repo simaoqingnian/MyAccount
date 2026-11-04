@@ -25,4 +25,11 @@ public final class EntrySession {
     }
 
     public synchronized void reset() { chosen = null; }
+
+    public synchronized LocalDate adjacent(LocalDate current, int direction) {
+        if (direction != -1 && direction != 1) throw new IllegalArgumentException("日期步长必须为一天");
+        if (current == null) throw new IllegalArgumentException("账目日期无效");
+        LocalDate next = current.plusDays(direction);
+        return next.isBefore(Ledger.MIN_DATE) || next.isAfter(clock.get()) ? null : next;
+    }
 }

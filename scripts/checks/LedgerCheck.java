@@ -106,6 +106,16 @@ public final class LedgerCheck {
         rejects(()->session.select(clock.get().plusDays(1)),"remembered date cannot be future");
         rejects(()->session.select(LocalDate.of(1999,12,31)),"remembered date lower bound");
         expect(new EntrySession(clock::get).date().equals(clock.get()),"remembered date is not persisted across sessions");
+        expect(session.adjacent(LocalDate.of(2026,11,1),-1).equals(LocalDate.of(2026,10,31)),"previous day crosses month boundary");
+        expect(session.adjacent(LocalDate.of(2026,12,31),-1)==null,"future date remains outside range");
+        expect(session.adjacent(LocalDate.of(2025,12,31),1).equals(LocalDate.of(2026,1,1)),"next day crosses year boundary");
+        expect(session.adjacent(LocalDate.of(2024,3,1),-1).equals(LocalDate.of(2024,2,29)),"previous day includes leap day");
+        expect(session.adjacent(LocalDate.of(2024,2,29),1).equals(LocalDate.of(2024,3,1)),"next day leaves leap day");
+        expect(session.adjacent(Ledger.MIN_DATE,-1)==null,"previous day disabled at minimum date");
+        expect(session.adjacent(clock.get(),1)==null,"next day disabled at today");
+        expect(session.date().equals(clock.get()),"availability checks do not change selected date");
+        LocalDate previous=session.adjacent(clock.get(),-1);session.select(previous);expect(session.date().equals(previous),"day button selection persists for later entries");
+        rejects(()->session.adjacent(previous,2),"day buttons only accept a single day step");
         List<String> recent=RecentCategories.select(Collections.emptyList(),"food");recent=RecentCategories.select(recent,"transport");
         expect(recent.equals(Arrays.asList("transport","food")),"last selected category comes first");
         recent=RecentCategories.select(recent,"food");expect(recent.equals(Arrays.asList("food","transport")),"reselection moves existing category without duplication");
@@ -118,6 +128,11 @@ public final class LedgerCheck {
         expect(incomeOrder.get(0).id.equals(writing.id)&&incomeOrder.stream().allMatch(c->c.type.equals("income")),"income and expense ordering are isolated");
         expect(catalog.ofType("expense").get(0).id.equals("food"),"ordering does not mutate ledger catalog");
         List<String> persisted=Arrays.asList(String.join(",",recent).split(","));expect(RecentCategories.order(catalog,"expense",persisted).get(0).id.equals("food"),"persisted choice list retains order");
+        expect(RecentCategories.first(catalog,"expense",Arrays.asList("transport","food")).id.equals("transport"),"new entry defaults to first recent project instead of fixed food");
+        expect(RecentCategories.first(catalog,"expense",Arrays.asList(writing.id,pet.id,"food")).id.equals(pet.id),"custom project can be the default first project");
+        expect(RecentCategories.first(catalog,"income",Arrays.asList("food",writing.id,"salary")).id.equals(writing.id),"income defaults to its own first project");
+        expect(RecentCategories.first(catalog,"expense",Arrays.asList("deleted",writing.id)).id.equals(catalog.ofType("expense").get(0).id),"unavailable recent projects fall back to first valid project");
+        expect(RecentCategories.first(catalog,"expense",Collections.emptyList()).id.equals(catalog.ofType("expense").get(0).id),"fresh install defaults to first visible project");
         System.out.println("Ledger checks passed: "+checks);
     }
 }

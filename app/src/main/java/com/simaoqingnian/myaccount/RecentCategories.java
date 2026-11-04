@@ -31,5 +31,11 @@ public final class RecentCategories {
         return result;
     }
 
+    public static Ledger.Category first(Ledger.Catalog catalog, String type, List<String> recent) {
+        List<Ledger.Category> ordered = order(catalog, type, recent);
+        if (ordered.isEmpty()) throw new IllegalArgumentException("没有可用的记账项目");
+        return ordered.get(0);
+    }
+
     private RecentCategories() {}
 }

@@ -3,6 +3,10 @@
     <item name="entry_amount" type="id" />
     <item name="entry_note" type="id" />
     <item name="entry_save" type="id" />
+    <item name="entry_continue" type="id" />
+    <item name="entry_date" type="id" />
+    <item name="entry_previous_day" type="id" />
+    <item name="entry_next_day" type="id" />
     <item name="main_content" type="id" />
     <item name="main_header" type="id" />
     <item name="search" type="id" />
