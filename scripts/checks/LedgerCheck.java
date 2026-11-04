@@ -133,6 +133,32 @@ public final class LedgerCheck {
         expect(RecentCategories.first(catalog,"income",Arrays.asList("food",writing.id,"salary")).id.equals(writing.id),"income defaults to its own first project");
         expect(RecentCategories.first(catalog,"expense",Arrays.asList("deleted",writing.id)).id.equals(catalog.ofType("expense").get(0).id),"unavailable recent projects fall back to first valid project");
         expect(RecentCategories.first(catalog,"expense",Collections.emptyList()).id.equals(catalog.ofType("expense").get(0).id),"fresh install defaults to first visible project");
+        List<Ledger.Entry> dailyRows=new ArrayList<>(Arrays.asList(
+            new Ledger.Entry("daily-food-a","expense","food",10,jan.toString(),"daily-match",now,now),
+            new Ledger.Entry("daily-before","expense","food",500,jan.minusDays(1).toString(),"earlier",now,now),
+            new Ledger.Entry("daily-income","income","salary",10000,jan.toString(),"daily-match",now,now),
+            new Ledger.Entry("daily-transport","expense","transport",150,jan.toString(),"ride",now,now),
+            new Ledger.Entry("daily-food-b","expense","food",20,jan.toString(),"another",now,now)));
+        Map<String,Ledger.DayTotals> daily=Ledger.dailyTotals(dailyRows);
+        expect(daily.size()==2&&daily.get(jan.toString()).expense==180&&daily.get(jan.toString()).income==10000,"daily totals separate income and expense with exact cents");
+        expect(daily.get(jan.minusDays(1).toString()).expense==500&&daily.get(jan.minusDays(1).toString()).income==0,"daily totals separate dates across year boundary even with interleaved input");
+        Ledger.DayTotals foodDay=Ledger.dailyTotals(Ledger.filter(dailyRows,"all","food","",jan)).get(jan.toString());
+        expect(foodDay.expense==30&&foodDay.income==0,"daily totals follow category and selected date filters");
+        Ledger.DayTotals incomeDay=Ledger.dailyTotals(Ledger.filter(dailyRows,"income","","",null)).get(jan.toString());
+        expect(incomeDay.expense==0&&incomeDay.income==10000,"daily totals follow income filter");
+        Ledger.DayTotals matchingDay=Ledger.dailyTotals(Ledger.filter(dailyRows,"all","","daily-match",null)).get(jan.toString());
+        expect(matchingDay.expense==10&&matchingDay.income==10000,"daily totals follow keyword filter for both entry types");
+        expect(Ledger.dailyTotals(Collections.emptyList()).isEmpty(),"empty list has no phantom daily totals");
+        List<Ledger.Entry> manyDaily=new ArrayList<>();for(int i=0;i<80;i++)manyDaily.add(new Ledger.Entry("daily-small-"+i,"expense","food",1,jan.toString(),"",now,now));
+        manyDaily.add(new Ledger.Entry("daily-large-a","expense","food",Ledger.MAX_MINOR,jan.toString(),"",now,now));
+        manyDaily.add(new Ledger.Entry("daily-large-b","expense","food",Ledger.MAX_MINOR,jan.toString(),"",now,now));
+        expect(Ledger.dailyTotals(manyDaily).get(jan.toString()).expense==Ledger.MAX_MINOR*2+80,"daily totals include entries beyond the 80-row display limit and preserve large integer sums");
+        Ledger.Data dailyData=new Ledger.Data(dailyRows,Collections.emptyMap(),false);
+        expect(Ledger.dailyTotals(Ledger.month(dailyData,YearMonth.from(jan))).size()==1,"daily totals stay inside the selected month");
+        expect(daily.values().stream().mapToLong(v->v.expense).sum()==Ledger.total(dailyRows,"expense")&&daily.values().stream().mapToLong(v->v.income).sum()==Ledger.total(dailyRows,"income"),"sum of daily totals agrees with filtered-list totals");
+        dailyRows.set(0,new Ledger.Entry("daily-food-a","expense","food",70,jan.minusDays(1).toString(),"daily-match",now,now));
+        Map<String,Ledger.DayTotals> editedDaily=Ledger.dailyTotals(dailyRows);
+        expect(editedDaily.get(jan.toString()).expense==170&&editedDaily.get(jan.minusDays(1).toString()).expense==570,"editing amount and moving a record to another day refreshes both daily totals");
         System.out.println("Ledger checks passed: "+checks);
     }
 }

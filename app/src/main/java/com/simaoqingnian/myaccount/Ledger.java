@@ -163,6 +163,21 @@ public final class Ledger {
     }
     public static List<Entry> month(Data data,YearMonth m){return range(data,m.atDay(1),m.atEndOfMonth());}
     public static long total(List<Entry> entries,String type){long result=0;for(Entry e:entries)if(e.type.equals(type))result=Math.addExact(result,e.amount);return result;}
+    public static final class DayTotals {
+        public final long expense,income;
+        private DayTotals(long expense,long income){this.expense=expense;this.income=income;}
+    }
+    /** Aggregate the full filtered list before applying any display limit. */
+    public static Map<String,DayTotals> dailyTotals(List<Entry> entries){
+        Map<String,DayTotals> days=new LinkedHashMap<>();
+        for(Entry e:entries){
+            DayTotals previous=days.get(e.date);
+            long expense=previous==null?0:previous.expense,income=previous==null?0:previous.income;
+            if(e.type.equals("expense"))expense=Math.addExact(expense,e.amount);else income=Math.addExact(income,e.amount);
+            days.put(e.date,new DayTotals(expense,income));
+        }
+        return Collections.unmodifiableMap(days);
+    }
     public static List<Entry> filter(List<Entry> entries,String type,String category,String keyword,LocalDate day){
         List<Entry> out=new ArrayList<>();String search=keyword.trim().toLowerCase(Locale.ROOT);
         for(Entry e:entries)if((type.equals("all")||e.type.equals(type))&&(category.isEmpty()||category.equals(e.categoryId))&&(day==null||e.date.equals(day.toString()))&&(e.note+" "+e.category.name).toLowerCase(Locale.ROOT).contains(search))out.add(e);return out;
