@@ -17,17 +17,29 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.text.Normalizer;
 
 /** Amounts are integer CNY cents. Dates represent the user's local calendar day. */
 public final class Ledger {
     public static final long MAX_MINOR = 99_999_999_999L;
     public static final int MAX_ENTRIES = 10_000;
+    public static final int MAX_CUSTOM_CATEGORIES = 100;
     public static final LocalDate MIN_DATE = LocalDate.of(2000, 1, 1);
     public static final class Category {
         public final String id, name, type, icon, color;
-        Category(String id, String name, String type, String icon, String color) {
-            this.id=id; this.name=name; this.type=type; this.icon=icon; this.color=color;
+        public Category(String id, String name, String type, String icon, String color) {
+            if(id==null||!id.matches("[A-Za-z][A-Za-z0-9_-]{0,99}"))throw new IllegalArgumentException("项目 ID 无效");
+            String clean=name==null?"":Normalizer.normalize(name.trim(),Normalizer.Form.NFKC);
+            if(clean.isEmpty()||clean.codePointCount(0,clean.length())>12||clean.matches("(?s).*[\\p{Cntrl}].*"))throw new IllegalArgumentException("项目名称须为 1–12 个字符，不能包含换行");
+            if(!"expense".equals(type)&&!"income".equals(type))throw new IllegalArgumentException("项目收支类型无效");
+            IconCatalog.get(icon);
+            if(color==null||!color.matches("#[0-9A-Fa-f]{6}"))throw new IllegalArgumentException("项目颜色无效");
+            this.id=id; this.name=clean; this.type=type; this.icon=icon; this.color=color;
         }
+        public boolean custom(){return id.startsWith("custom-");}
     }
     public static final List<Category> CATEGORIES;
     static {
@@ -39,8 +51,26 @@ public final class Ledger {
             {"fun","娱乐","expense","game","#E4B8AF"},{"health","医疗","expense","heart","#D49F91"},
             {"study","学习","expense","book","#B0BED9"},{"travel","旅行","expense","plane","#8BBAB3"},
             {"gift","人情","expense","gift","#D2B8CD"},{"other","其他","expense","grid","#B8BDB5"},
+            {"coffee","咖啡饮品","expense","coffee","#C4AC91"},{"fruit","水果","expense","fruit","#AAC0A4"},
+            {"snacks","零食","expense","cookie","#EAC4A0"},{"groceries","买菜","expense","vegetable","#AAC0A4"},
+            {"dining","聚餐","expense","bowl","#E4B8AF"},{"takeout","外卖","expense","takeout","#EAC4A0"},
+            {"clothing","服饰","expense","shirt","#B0BED9"},{"beauty","美妆","expense","lipstick","#D2B8CD"},
+            {"haircut","理发","expense","scissors","#C2B8D6"},{"mobile","通讯","expense","phone","#A9C6CC"},
+            {"internet","网络","expense","wifi","#8BBAB3"},{"subscriptions","订阅","expense","subscription","#B0BED9"},
+            {"digital","数码","expense","laptop","#A9C6CC"},{"car","养车","expense","car","#A9C6CC"},
+            {"fuel","加油","expense","fuel","#EAC4A0"},{"parking","停车","expense","parking","#B0BED9"},
+            {"taxi","打车","expense","taxi","#EAC4A0"},{"pets","宠物","expense","paw","#C4AC91"},
+            {"kids","育儿","expense","baby","#E4B8AF"},{"sports","运动","expense","ball","#AAC0A4"},
+            {"fitness","健身","expense","dumbbell","#8BBAB3"},{"insurance","保险","expense","shield","#A9C6CC"},
+            {"mortgage","房贷","expense","bank","#B0BED9"},{"rent","房租","expense","home","#8BBAB3"},
+            {"service","维修","expense","tools","#C4AC91"},{"charity","公益","expense","handHeart","#D2B8CD"},
+            {"fees","手续费","expense","receipt","#B8BDB5"},{"express","快递","expense","package","#EAC4A0"},
             {"salary","工资","income","wallet","#345E50"},{"bonus","奖金","income","gift","#AAC0A4"},
-            {"side","兼职","income","bag","#EAC4A0"},{"otherIncome","其他收入","income","grid","#A9C6CC"}
+            {"side","兼职","income","bag","#EAC4A0"},{"otherIncome","其他收入","income","grid","#A9C6CC"},
+            {"refund","退款","income","refund","#AAC0A4"},{"interest","利息","income","percent","#8BBAB3"},
+            {"investment","理财收益","income","coins","#EAC4A0"},{"resale","闲置出售","income","recycle","#AAC0A4"},
+            {"redpacket","红包","income","redpacket","#E4B8AF"},{"reimbursement","报销","income","briefcase","#A9C6CC"},
+            {"pension","养老金","income","pension","#C4AC91"},{"allowance","补贴","income","ticket","#B0BED9"}
         };
         for(String[] d:definitions)c.add(new Category(d[0],d[1],d[2],d[3],d[4]));
         CATEGORIES=Collections.unmodifiableList(c);
@@ -48,6 +78,18 @@ public final class Ledger {
     public static LocalDate today(){return LocalDate.now();}
     public static Category category(String id){for(Category c:CATEGORIES)if(c.id.equals(id))return c;throw new IllegalArgumentException("未知账目类别");}
     public static List<Category> categories(String type){List<Category> out=new ArrayList<>();for(Category c:CATEGORIES)if(c.type.equals(type))out.add(c);return out;}
+    public static final class Catalog {
+        public final List<Category> all,custom;
+        public Catalog(List<Category> custom){
+            if(custom.size()>MAX_CUSTOM_CATEGORIES)throw new IllegalArgumentException("最多可创建 100 个自定义项目");
+            List<Category> combined=new ArrayList<>(CATEGORIES);Set<String> ids=new HashSet<>(),names=new HashSet<>();
+            for(Category c:CATEGORIES){ids.add(c.id);names.add(c.type+":"+c.name.toLowerCase(Locale.ROOT));}
+            for(Category c:custom){if(!c.custom()||!ids.add(c.id))throw new IllegalArgumentException("自定义项目 ID 重复或无效");if(!names.add(c.type+":"+c.name.toLowerCase(Locale.ROOT)))throw new IllegalArgumentException("同一收支类型下项目名称不能重复");combined.add(c);}
+            this.custom=Collections.unmodifiableList(new ArrayList<>(custom));all=Collections.unmodifiableList(combined);
+        }
+        public Category get(String id){for(Category c:all)if(c.id.equals(id))return c;throw new IllegalArgumentException("未知账目项目");}
+        public List<Category> ofType(String type){List<Category> out=new ArrayList<>();for(Category c:all)if(c.type.equals(type))out.add(c);return out;}
+    }
     public static long parseAmount(String input){
         String s=input==null?"":input.trim();
         if(!s.matches("[0-9]{1,9}(\\.[0-9]{1,2})?"))throw new IllegalArgumentException("请输入最多两位小数的金额");
@@ -65,9 +107,13 @@ public final class Ledger {
     public static final class Entry {
         public final String id,type,categoryId,date,note,createdAt,updatedAt;
         public final long amount;
+        public final Category category;
         public Entry(String id,String type,String categoryId,long amount,String date,String note,String createdAt,String updatedAt){
+            this(id,type,categoryId,amount,date,note,createdAt,updatedAt,new Catalog(Collections.emptyList()));
+        }
+        public Entry(String id,String type,String categoryId,long amount,String date,String note,String createdAt,String updatedAt,Catalog catalog){
             if(id==null||id.trim().isEmpty()||id.length()>100)throw new IllegalArgumentException("账目 ID 无效");
-            if(!category(categoryId).type.equals(type))throw new IllegalArgumentException("类别与收支类型不匹配");
+            this.category=catalog.get(categoryId);if(!category.type.equals(type))throw new IllegalArgumentException("类别与收支类型不匹配");
             checkMinor(amount);parseDate(date);
             if(note==null||note.codePointCount(0,note.length())>100)throw new IllegalArgumentException("备注最多 100 个字符");
             try{Instant.parse(createdAt);Instant.parse(updatedAt);}catch(Exception e){throw new IllegalArgumentException("账目时间无效");}
@@ -79,10 +125,13 @@ public final class Ledger {
         public final Long total;
         public final Map<String,Long> limits;
         public Budget(Long total,Map<String,Long> values){
+            this(total,values,new Catalog(Collections.emptyList()));
+        }
+        public Budget(Long total,Map<String,Long> values,Catalog catalog){
             if(total!=null)checkMinor(total);
             long assigned=0;Map<String,Long> clean=new LinkedHashMap<>();
             for(Map.Entry<String,Long> e:values.entrySet()){
-                if(!category(e.getKey()).type.equals("expense"))throw new IllegalArgumentException("收入类别不能设置预算");
+                if(!catalog.get(e.getKey()).type.equals("expense"))throw new IllegalArgumentException("收入类别不能设置预算");
                 if(e.getValue()==null)throw new IllegalArgumentException("分类预算无效");checkMinor(e.getValue());assigned+=e.getValue();clean.put(e.getKey(),e.getValue());
             }
             if(assigned>(total==null?0:total))throw new IllegalArgumentException("分类预算合计不能超过月总预算");
@@ -94,7 +143,17 @@ public final class Ledger {
         public final List<Entry> entries;
         public final Map<String,Budget> budgets;
         public final boolean hide;
-        public Data(List<Entry> entries,Map<String,Budget> budgets,boolean hide){this.entries=Collections.unmodifiableList(new ArrayList<>(entries));this.budgets=Collections.unmodifiableMap(new LinkedHashMap<>(budgets));this.hide=hide;}
+        public final Catalog catalog;
+        public Data(List<Entry> entries,Map<String,Budget> budgets,boolean hide){this(entries,budgets,hide,Collections.emptyList());}
+        public Data(List<Entry> entries,Map<String,Budget> budgets,boolean hide,List<Category> custom){
+            catalog=new Catalog(custom);List<Entry> clean=new ArrayList<>();Set<String> ids=new HashSet<>();
+            if(entries.size()>MAX_ENTRIES)throw new IllegalArgumentException("账目超过 10,000 笔上限");
+            for(Entry e:entries){Category c=catalog.get(e.categoryId);if(!ids.add(e.id))throw new IllegalArgumentException("账目 ID 重复");clean.add(e.category==c?e:new Entry(e.id,e.type,e.categoryId,e.amount,e.date,e.note,e.createdAt,e.updatedAt,catalog));}
+            for(Map.Entry<String,Budget> b:budgets.entrySet()){if(!b.getKey().matches("20[0-9]{2}-(0[1-9]|1[0-2])"))throw new IllegalArgumentException("预算月份无效");new Budget(b.getValue().total,b.getValue().limits,catalog);}
+            this.entries=Collections.unmodifiableList(clean);this.budgets=Collections.unmodifiableMap(new LinkedHashMap<>(budgets));this.hide=hide;
+        }
+        public Category category(String id){return catalog.get(id);}
+        public List<Category> categories(String type){return catalog.ofType(type);}
         public static Data empty(){return new Data(Collections.emptyList(),Collections.emptyMap(),false);}
         public Budget budget(YearMonth m){Budget b=budgets.get(m.toString());return b==null?Budget.empty():b;}
     }
@@ -106,15 +165,21 @@ public final class Ledger {
     public static long total(List<Entry> entries,String type){long result=0;for(Entry e:entries)if(e.type.equals(type))result=Math.addExact(result,e.amount);return result;}
     public static List<Entry> filter(List<Entry> entries,String type,String category,String keyword,LocalDate day){
         List<Entry> out=new ArrayList<>();String search=keyword.trim().toLowerCase(Locale.ROOT);
-        for(Entry e:entries)if((type.equals("all")||e.type.equals(type))&&(category.isEmpty()||category.equals(e.categoryId))&&(day==null||e.date.equals(day.toString()))&&(e.note+" "+category(e.categoryId).name).toLowerCase(Locale.ROOT).contains(search))out.add(e);return out;
+        for(Entry e:entries)if((type.equals("all")||e.type.equals(type))&&(category.isEmpty()||category.equals(e.categoryId))&&(day==null||e.date.equals(day.toString()))&&(e.note+" "+e.category.name).toLowerCase(Locale.ROOT).contains(search))out.add(e);return out;
+    }
+    public static List<String> noteSuggestions(Data data,String type,String categoryId){
+        List<Entry> history=filter(data.entries,type,categoryId,"",null);
+        history.sort(Comparator.comparing((Entry e)->Instant.parse(e.updatedAt)).thenComparing(e->Instant.parse(e.createdAt)).reversed());
+        Set<String> notes=new LinkedHashSet<>();for(Entry e:history)if(!e.note.isEmpty()){notes.add(e.note);if(notes.size()==30)break;}
+        return new ArrayList<>(notes);
     }
     public static final class Group {
         public final Category category;public long total;public int count;
         Group(Category c){category=c;}
     }
     public static List<Group> groups(List<Entry> entries,String type){
-        Map<String,Group> map=new LinkedHashMap<>();for(Category c:categories(type))map.put(c.id,new Group(c));
-        for(Entry e:entries)if(e.type.equals(type)){Group g=map.get(e.categoryId);g.total+=e.amount;g.count++;}
+        Map<String,Group> map=new LinkedHashMap<>();
+        for(Entry e:entries)if(e.type.equals(type)){Group g=map.get(e.categoryId);if(g==null){g=new Group(e.category);map.put(e.categoryId,g);}g.total+=e.amount;g.count++;}
         List<Group> out=new ArrayList<>();for(Group g:map.values())if(g.count>0)out.add(g);out.sort((a,b)->Long.compare(b.total,a.total));return out;
     }
     public static final class Bucket {
@@ -143,7 +208,7 @@ public final class Ledger {
     public static Report report(Data data,String period,LocalDate anchor,String type){return new Report(data,period,anchor,type);}
     public static String csv(List<Entry> entries){
         StringBuilder b=new StringBuilder("\uFEFF");csvLine(b,new String[]{"账目ID","日期","类型","类别","金额","币种","备注"});
-        for(Entry e:entries)csvLine(b,new String[]{e.id,e.date,e.type.equals("expense")?"支出":"收入",category(e.categoryId).name,plain(e.amount),"CNY",e.note});return b.toString();
+        for(Entry e:entries)csvLine(b,new String[]{e.id,e.date,e.type.equals("expense")?"支出":"收入",e.category.name,plain(e.amount),"CNY",e.note});return b.toString();
     }
     private static void csvLine(StringBuilder b,String[] cells){for(int i=0;i<cells.length;i++){if(i>0)b.append(',');String s=cells[i];if(s.matches("(?s)^\\s*[=+\\-@].*"))s="'"+s;b.append('"').append(s.replace("\"","\"\"")).append('"');}b.append("\r\n");}
     public static Data demo(){

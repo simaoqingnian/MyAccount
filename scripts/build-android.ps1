@@ -47,6 +47,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Gradle build failed: $LASTEXITCODE" }
     $artifactDirectory = Join-Path $projectRoot 'artifacts'
     New-Item -ItemType Directory -Path $artifactDirectory -Force | Out-Null
-    Copy-Item -LiteralPath (Join-Path $projectRoot 'app\build\outputs\apk\debug\app-debug.apk') -Destination (Join-Path $artifactDirectory 'Heji-0.1.0-debug.apk') -Force
-    Get-FileHash -LiteralPath (Join-Path $artifactDirectory 'Heji-0.1.0-debug.apk') -Algorithm SHA256
+    $metadata = Get-Content -LiteralPath (Join-Path $projectRoot 'app\build\outputs\apk\debug\output-metadata.json') -Raw | ConvertFrom-Json
+    $apkName = 'Heji-' + $metadata.elements[0].versionName + '-debug.apk'
+    Copy-Item -LiteralPath (Join-Path $projectRoot 'app\build\outputs\apk\debug\app-debug.apk') -Destination (Join-Path $artifactDirectory $apkName) -Force
+    Get-FileHash -LiteralPath (Join-Path $artifactDirectory $apkName) -Algorithm SHA256
 } finally { Pop-Location }

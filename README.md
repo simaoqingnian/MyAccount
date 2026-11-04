@@ -2,20 +2,25 @@
 
 本项目包含鲨鱼记账公开资料调研、个人记账 MVP 需求、可交互网页原型、Sunburst 视觉概念图，以及基于原型开发的 **Android 原生应用**。调研与首版开发日期为 2026-11-04；用户已确认优先个人日常记账 MVP。
 
-**APK：[artifacts/Heji-0.1.0-debug.apk](artifacts/Heji-0.1.0-debug.apk)**。包名 `com.simaoqingnian.myaccount`，版本 `0.1.0 (1)`，支持 Android 8.0 / API 26 及以上，使用本项目独立的调试签名。APK 是本地构建产物，未提交到 Git；克隆仓库后可按下方命令生成。
+**APK：[artifacts/Heji-0.2.0-debug.apk](artifacts/Heji-0.2.0-debug.apk)**。包名 `com.simaoqingnian.myaccount`，版本 `0.2.0 (2)`，支持 Android 8.0 / API 26 及以上，使用本项目独立的调试签名。APK 是本地构建产物，未提交到 Git；克隆仓库后可按下方命令生成。
 
-需要一起带走源码、APK、需求和原型时，可使用本地交付包 [禾记-Android与需求-0.1.0.zip](禾记-Android与需求-0.1.0.zip)（不含本地 SDK、缓存和签名密钥）。执行 `python scripts/package-delivery.py` 可重新生成。
+需要一起带走源码、APK、需求和原型时，可使用本地交付包 [禾记-Android与需求-0.2.0.zip](禾记-Android与需求-0.2.0.zip)（不含本地 SDK、缓存和签名密钥）。执行 `python scripts/package-delivery.py` 可重新生成。
 
-应用采用 Java 原生界面与 SQLite 私有数据库，复用 FilmWord 的 JDK 17、Android SDK 35，以及当前电脑缓存中的 Gradle 8.7 / Android Gradle Plugin 8.6.1。首次启动为空账本，使用手机的真实日期；在“我的 → 载入演示账目”可追加近三年的虚构数据。按用户要求，**没有安装到手机或模拟器测试**。构建、静态检查及桌面账务规则验证的具体结果见 [Android 开发与打包说明](docs/05-Android开发与打包说明.md)。
+应用采用 Java 原生界面与 SQLite 私有数据库，复用 FilmWord 的 JDK 17、Android SDK 35，以及当前电脑缓存中的 Gradle 8.7 / Android Gradle Plugin 8.6.1。首次启动为空账本，使用手机的真实日期；在“我的 → 载入演示账目”可追加近三年的虚构数据。按用户要求，**没有安装到手机或模拟器测试**。构建、静态检查及桌面账务 / 备份规则验证的具体结果见 [0.2.0 更新与使用说明](docs/06-项目图标与连续记账更新.md)。
 
 **v0.2 已补齐鲨鱼记账式图表组织：周/月/年趋势、历史年份和月份选择、分类排行、历年收支账单。** [直接打开年度图表](prototype/index.html#charts-year) · [直接打开历年账单](prototype/index.html#charts-history)。
+
+**Android 0.2.0 新增：40 个支出项目、12 个收入项目、72 个离线图标、自定义项目及同项目历史备注。** “记一笔 → ＋ 自定义”可选图标建项目；“我的 → 项目与图标”可管理项目。点击备注框可直接选用当前项目最近的历史备注。手动选过日期后，本轮使用的后续新增账目沿用该日期；重新开启应用默认今天，旋转和暂时切到后台不重置。直接编辑旧账目不会改变连续记账日期。
+
+新版沿用原包名与调试签名，versionCode 增加为 2。数据库由版本 1 升为 2，只新增项目表；旧账目、预算与设置的表结构保留。升级安装行为尚未实机验证。
 
 **推荐从 [交付首页](index.html) 打开。无需安装依赖或启动服务，直接双击即可。**
 
 | 文件 | 用途 |
 |---|---|
-| [artifacts/Heji-0.1.0-debug.apk](artifacts/Heji-0.1.0-debug.apk) | 本地生成的 Android 安装包 |
-| [docs/05-Android开发与打包说明.md](docs/05-Android开发与打包说明.md) | 已实现功能、环境复用、构建命令、验证范围 |
+| [artifacts/Heji-0.2.0-debug.apk](artifacts/Heji-0.2.0-debug.apk) | 本地生成的 Android 安装包 |
+| [docs/06-项目图标与连续记账更新.md](docs/06-项目图标与连续记账更新.md) | 当前版本：项目、图标、历史备注、连续记账日期与验证结果 |
+| [docs/05-Android开发与打包说明.md](docs/05-Android开发与打包说明.md) | 0.1.0 历史交付与 FilmWord 环境复用说明 |
 | [app/src/main](app/src/main) | 原生 Java 界面、SQLite 存储及 Android 资源 |
 | [prototype/index.html](prototype/index.html) | 可点击、可记账、可编辑、可导出恢复的交互原型 |
 | [docs/需求与设计说明.html](docs/需求与设计说明.html) | 合并的调研、PRD 与设计说明，浏览器阅读 |
@@ -37,7 +42,7 @@
 
 已使用过原型的浏览器会保留已有账目，不自动注入历史样本。若未看到历史数据，进入“图表 → 历年账单”，点击“添加历史演示账目”并确认，可保留原账目后追加。也可在“我的”确认重置为最新完整样本。数据仅保存在当前浏览器 `localStorage`，请使用同一浏览器、同一文件路径继续体验。
 
-网页原型和 Android 应用分别保存数据；可通过完整 JSON 备份迁移账目、预算及金额隐藏设置。网页固定演示日期，Android 使用系统日期，导入日期不得晚于手机当天。两者均不含云同步、会员、自动支付抓取、OCR 或生物识别。AI 图是视觉参考，生成图中数值/文字不作为规格。
+网页原型和 Android 应用分别保存数据；Android 可导入网页原型 / 旧版的 schema 1 备份；新版导出 schema 2，额外保留自定义项目，旧网页原型无法导入新版备份。网页固定演示日期，Android 使用系统日期，导入日期不得晚于手机当天。两者均不含云同步、会员、自动支付抓取、OCR 或生物识别。AI 图是视觉参考，生成图中数值/文字不作为规格。
 
 ## 构建 Android APK
 
@@ -47,7 +52,7 @@
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-android.ps1
 ```
 
-脚本自动定位 `D:\03_work\09_android\FilmWord\.jdk\jdk-17` 和 `.android-sdk`，选择现有 Gradle 缓存，生成本项目的 `local.properties` 与 `.android/debug.keystore`，最后输出到 `artifacts/Heji-0.1.0-debug.apk`。环境、签名文件和构建产物均不进入 Git。复用的只是工具链，本项目没有 FilmWord 的业务代码或数据。
+脚本自动定位 `D:\03_work\09_android\FilmWord\.jdk\jdk-17` 和 `.android-sdk`，选择现有 Gradle 缓存，生成本项目的 `local.properties` 与 `.android/debug.keystore`，最后输出到 `artifacts/Heji-0.2.0-debug.apk`。环境、签名文件和构建产物均不进入 Git。复用的只是工具链，本项目没有 FilmWord 的业务代码或数据。
 
 FilmWord 目录或缓存目录不同时可以指定参数；`-Online` 允许 Gradle 获取缺失依赖：
 
@@ -86,7 +91,7 @@ MyAccount/
 node --test scripts/domain.test.cjs
 ```
 
-文档 HTML 从调研、PRD、原型交接和 Android 说明 Markdown 构建，需 Python 的 `markdown` 模块：
+文档 HTML 从调研、PRD、原型交接及各版 Android 说明 Markdown 构建，需 Python 的 `markdown` 模块：
 
 ```powershell
 python scripts/build-docs.py
