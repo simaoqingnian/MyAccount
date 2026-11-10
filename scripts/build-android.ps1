@@ -24,10 +24,22 @@ $sdkProperty = $sdkPath.Replace('\','/')
 $signingDirectory = Join-Path $projectRoot '.android'
 $signingPath = Join-Path $signingDirectory 'debug.keystore'
 if (!(Test-Path -LiteralPath $signingPath)) {
-    New-Item -ItemType Directory -Path $signingDirectory -Force | Out-Null
-    & (Join-Path $jdkPath 'bin\keytool.exe') -genkeypair -keystore $signingPath -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname 'CN=Heji Debug, O=MyAccount, C=CN'
-    if ($LASTEXITCODE -ne 0) { throw 'Could not create project debug signing key.' }
+    throw 'The original .android/debug.keystore is required to build an update. Restore that key; a different key cannot update the installed app.'
 }
+$expectedSigningHash = ([System.IO.File]::ReadAllText((Join-Path $projectRoot 'gradle\debug-signing.sha256'))).Trim().ToUpperInvariant()
+$artifactDirectory = Join-Path $projectRoot 'artifacts'
+New-Item -ItemType Directory -Path $artifactDirectory -Force | Out-Null
+$publicCertificate = Join-Path $artifactDirectory 'debug-signing.cer'
+$certificateErrorPreference = $ErrorActionPreference
+try {
+    # keytool reports successful exports on stderr, which Windows PowerShell treats as an error.
+    $ErrorActionPreference = 'Continue'
+    & (Join-Path $jdkPath 'bin\keytool.exe') -exportcert -keystore $signingPath -storepass android -alias androiddebugkey -file $publicCertificate 2>$null
+    $certificateExitCode = $LASTEXITCODE
+} finally { $ErrorActionPreference = $certificateErrorPreference }
+if ($certificateExitCode -ne 0) { throw 'Could not verify the debug signing certificate.' }
+$actualSigningHash = (Get-FileHash -LiteralPath $publicCertificate -Algorithm SHA256).Hash
+if ($actualSigningHash -ne $expectedSigningHash) { throw 'Signing certificate differs from previous APKs. Restore the original signing key before building an update.' }
 $gradleArguments = @('--console=plain', '--no-daemon', "-Dorg.gradle.java.home=$jdkPath", ':app:assembleDebug', ':app:lintDebug')
 if (!$Online) { $gradleArguments = @('--offline') + $gradleArguments }
 Push-Location $projectRoot
@@ -45,8 +57,6 @@ try {
         & (Join-Path $projectRoot 'gradlew.bat') @gradleArguments
     }
     if ($LASTEXITCODE -ne 0) { throw "Gradle build failed: $LASTEXITCODE" }
-    $artifactDirectory = Join-Path $projectRoot 'artifacts'
-    New-Item -ItemType Directory -Path $artifactDirectory -Force | Out-Null
     $metadata = Get-Content -LiteralPath (Join-Path $projectRoot 'app\build\outputs\apk\debug\output-metadata.json') -Raw | ConvertFrom-Json
     $apkName = 'Heji-' + $metadata.elements[0].versionName + '-debug.apk'
     Copy-Item -LiteralPath (Join-Path $projectRoot 'app\build\outputs\apk\debug\app-debug.apk') -Destination (Join-Path $artifactDirectory $apkName) -Force

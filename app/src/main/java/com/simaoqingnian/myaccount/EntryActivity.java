@@ -8,7 +8,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -17,8 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AutoCompleteTextView;
-import android.widget.ArrayAdapter;
+import android.widget.HorizontalScrollView;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -27,13 +29,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 import android.view.inputmethod.InputMethodManager;
+import android.view.inputmethod.EditorInfo;
 
 public final class EntryActivity extends Activity {
     private final ExecutorService worker=LedgerStore.IO;private LedgerStore store;
     private String id,type="expense",category="",amount="",note="",date=EntrySession.CURRENT.date().toString(),createdAt,original,pendingStamp;
     private Ledger.Data ledger=Ledger.Data.empty();
     private List<String> recentCategories=new ArrayList<>();
-    private EditText amountInput;private NoteInput noteInput;private GridLayout keyboard;private TextView error;private boolean saving,ready,pendingContinue;private LinearLayout root;
+    private EditText amountInput;private NoteInput noteInput;private GridLayout keyboard;private TextView error;private boolean saving,ready,pendingContinue,imeVisible;private LinearLayout root;
+    private final List<TextView> noteChips=new ArrayList<>();
     @Override public void onCreate(Bundle saved){super.onCreate(saved);store=new LedgerStore(this);id=getIntent().getStringExtra("entryId");
         recentCategories=Arrays.asList(getSharedPreferences("entry-ui",MODE_PRIVATE).getString("recent-projects","").split(","));
         if(saved!=null){id=saved.getString("id");type=saved.getString("type","expense");category=saved.getString("category","");amount=saved.getString("amount","");note=saved.getString("note","");date=saved.getString("date",date);createdAt=saved.getString("createdAt");original=saved.getString("original");ready=saved.getBoolean("ready");pendingStamp=saved.getString("pendingStamp");pendingContinue=saved.getBoolean("pendingContinue");}
@@ -47,7 +51,7 @@ public final class EntryActivity extends Activity {
     private String fingerprint(){return type+"\n"+category+"\n"+amount+"\n"+date+"\n"+note;}
     private void capture(){if(amountInput!=null)amount=amountInput.getText().toString();if(noteInput!=null)note=noteInput.getText().toString();}
     private void render(){
-        keyboard=null;root=Ui.column(this);root.setBackgroundColor(Ui.PAPER);setContentView(root);Ui.insets(this,root);
+        keyboard=null;imeVisible=false;noteChips.clear();root=Ui.column(this);root.setBackgroundColor(Ui.PAPER);setContentView(root);LinearLayout currentRoot=root;Ui.insets(this,root,visible->{if(root==currentRoot)onImeVisibilityChanged(visible);});
         LinearLayout header=Ui.row(this);Ui.pad(header,17,7,17,5);TextView close=Ui.smallAction(this,"取消",this::requestClose);header.addView(close);TextView title=Ui.bold(this,id==null?"记一笔":"编辑账目",20,Ui.INK);title.setGravity(Gravity.CENTER);Ui.weight(header,title);header.addView(Ui.smallAction(this,"保存",this::save));root.addView(header);
         LinearLayout body=Ui.column(this);Ui.pad(body,18,0,18,4);root.addView(body,new LinearLayout.LayoutParams(-1,0,1));
         LinearLayout types=Ui.row(this);types.setBackground(Ui.background(Ui.SAGE,12,this));for(String value:new String[]{"expense","income"}){TextView t=Ui.action(this,value.equals("expense")?"支出":"收入",type.equals(value),()->{if(saving)return;capture();type=value;category=firstCategory();render();});t.setMinHeight(Ui.dp(this,42));if(!type.equals(value))t.setBackgroundColor(android.graphics.Color.TRANSPARENT);LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(0,Ui.dp(this,42),1);p.setMargins(Ui.dp(this,3),Ui.dp(this,3),Ui.dp(this,3),Ui.dp(this,3));types.addView(t,p);}body.addView(types);Ui.space(body,4);
@@ -60,13 +64,25 @@ public final class EntryActivity extends Activity {
         ScrollView categoryScroll=new ScrollView(this);categoryScroll.setFillViewport(false);categoryScroll.addView(categories);body.addView(categoryScroll,new LinearLayout.LayoutParams(-1,0,1));
         // Keep the date above both the amount keypad and the system IME.
         LinearLayout details=Ui.column(this);Ui.pad(details,18,3,18,5);root.addView(details,new LinearLayout.LayoutParams(-1,-2));
-        noteInput=new NoteInput(this);noteInput.setId(R.id.entry_note);noteInput.setSingleLine(true);noteInput.setTextSize(14);noteInput.setTextColor(Ui.INK);noteInput.setHintTextColor(Ui.MUTED);noteInput.setHint("点击选择历史备注，也可直接输入");noteInput.setBackground(Ui.border(Ui.WHITE,12,this));Ui.pad(noteInput,11,6,11,6);noteInput.setMinHeight(Ui.dp(this,38));noteInput.setText(note,false);noteInput.setContentDescription("账目备注，点击可选择当前项目的历史备注");noteInput.setFilters(new InputFilter[]{new InputFilter.LengthFilter(200)});noteInput.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_dropdown_item_1line,Ledger.noteSuggestions(ledger,type,category)));noteInput.setDropDownHeight(Ui.dp(this,180));noteInput.setOnClickListener(v->showNotes());noteInput.setOnFocusChangeListener((v,focused)->{if(keyboard!=null)keyboard.setVisibility(focused?View.GONE:View.VISIBLE);if(focused)noteInput.post(this::showNotes);});noteInput.setOnItemClickListener((parent,v,position,row)->{note=noteInput.getText().toString();noteInput.setSelection(note.length());noteInput.dismissDropDown();});details.addView(noteInput);Ui.space(details,4);
+        noteInput=new NoteInput(this);noteInput.setId(R.id.entry_note);noteInput.setSingleLine(true);noteInput.setTextSize(14);noteInput.setTextColor(Ui.INK);noteInput.setHintTextColor(Ui.MUTED);noteInput.setHint("输入备注（可选）");noteInput.setBackground(Ui.border(Ui.WHITE,12,this));Ui.pad(noteInput,11,6,11,6);noteInput.setMinHeight(Ui.dp(this,38));noteInput.setText(note);noteInput.setContentDescription("账目备注，上方历史备注可左右滑动并点击采用");noteInput.setFilters(new InputFilter[]{new InputFilter.LengthFilter(200)});noteInput.setImeOptions(EditorInfo.IME_ACTION_DONE);noteInput.imeDismissed=this::showAmountKeyboard;
+        noteInput.setOnEditorActionListener((v,action,event)->{if(action==EditorInfo.IME_ACTION_DONE){showAmountKeyboard();return true;}return false;});
+        noteInput.addTextChangedListener(new TextWatcher(){public void beforeTextChanged(CharSequence s,int a,int b,int c){}public void onTextChanged(CharSequence s,int a,int b,int c){note=s.toString();updateNoteSelection();}public void afterTextChanged(Editable e){}});
+        addNoteHistory(details);details.addView(noteInput);Ui.space(details,4);
         LinearLayout dateRow=Ui.row(this);dateRow.addView(dayButton(-1),new LinearLayout.LayoutParams(Ui.dp(this,40),Ui.dp(this,44)));
         TextView dateButton=Ui.action(this,"账目日期  "+date+"  ⌄",false,()->{if(saving)return;capture();LocalDate value=LocalDate.parse(date);DatePickerDialog picker=new DatePickerDialog(this,(view,y,m,d)->{capture();LocalDate selected=LocalDate.of(y,m+1,d);EntrySession.CURRENT.select(selected);date=selected.toString();render();},value.getYear(),value.getMonthValue()-1,value.getDayOfMonth());picker.getDatePicker().setMinDate(Ledger.MIN_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());picker.getDatePicker().setMaxDate(System.currentTimeMillis());picker.show();});dateButton.setId(R.id.entry_date);dateButton.setBackground(Ui.border(Ui.WHITE,12,this));dateButton.setTextSize(12);dateButton.setMinHeight(Ui.dp(this,44));Ui.pad(dateButton,4,4,4,4);dateButton.setContentDescription("账目日期 "+date+"，点击选择日期，手动选定后持续沿用");LinearLayout.LayoutParams dateParams=new LinearLayout.LayoutParams(0,-2,1);dateParams.setMargins(Ui.dp(this,4),0,Ui.dp(this,4),0);dateRow.addView(dateButton,dateParams);dateRow.addView(dayButton(1),new LinearLayout.LayoutParams(Ui.dp(this,40),Ui.dp(this,44)));details.addView(dateRow);error=Ui.text(this,"",12,Ui.DANGER);error.setVisibility(View.GONE);error.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);Ui.pad(error,0,4,0,0);details.addView(error);
-        keyboard=new GridLayout(this);keyboard.setColumnCount(4);keyboard.setRowCount(4);Ui.pad(keyboard,17,4,17,12);String[] keys={"7","8","9","4","5","6","1","2","3",".","0","清空"};
+        keyboard=new GridLayout(this);keyboard.setId(R.id.entry_keypad);keyboard.setColumnCount(4);keyboard.setRowCount(4);Ui.pad(keyboard,17,4,17,12);String[] keys={"7","8","9","4","5","6","1","2","3",".","0","清空"};
         for(int i=0;i<keys.length;i++){final String key=keys[i];TextView button=key(key,false,()->press(key));if(key.equals("清空"))button.setTextSize(13);GridLayout.LayoutParams p=keyParams(i/3,i%3,1);keyboard.addView(button,p);}
-        keyboard.addView(key("⌫",false,()->press("backspace")),keyParams(0,3,1));LinearLayout actions=Ui.column(this);TextView save=key("保存",true,this::save);save.setId(R.id.entry_save);save.setTextSize(16);actions.addView(save,new LinearLayout.LayoutParams(-1,0,1));Ui.space(actions,6);TextView next=key("继续",false,()->save(true));next.setId(R.id.entry_continue);next.setContentDescription("保存当前账目并继续记下一笔");next.setTextSize(16);actions.addView(next,new LinearLayout.LayoutParams(-1,0,1));keyboard.addView(actions,keyParams(1,3,3));root.addView(keyboard);
+        keyboard.addView(key("⌫",false,()->press("backspace")),keyParams(0,3,1));LinearLayout actions=Ui.column(this);TextView save=key("保存",true,this::save);save.setId(R.id.entry_save);save.setTextSize(16);actions.addView(save,new LinearLayout.LayoutParams(-1,0,1));Ui.space(actions,6);TextView next=key("继续",false,()->save(true));next.setId(R.id.entry_continue);next.setContentDescription("保存当前账目并继续记下一笔");next.setTextSize(16);actions.addView(next,new LinearLayout.LayoutParams(-1,0,1));keyboard.addView(actions,keyParams(1,3,3));root.addView(keyboard);keyboard.setVisibility(imeVisible?View.GONE:View.VISIBLE);amountInput.requestFocus();root.requestApplyInsets();
     }
+    private void addNoteHistory(LinearLayout details){
+        List<String> suggestions=Ledger.noteSuggestions(ledger,type,category);if(suggestions.isEmpty())return;
+        HorizontalScrollView strip=new HorizontalScrollView(this);strip.setId(R.id.entry_note_history);strip.setHorizontalScrollBarEnabled(false);strip.setHorizontalFadingEdgeEnabled(true);strip.setContentDescription("历史备注，可左右滑动，点击采用");LinearLayout choices=Ui.row(this);Ui.pad(choices,0,2,0,2);
+        for(String suggestion:suggestions){TextView chip=Ui.action(this,suggestion,false,()->{if(saving)return;noteInput.setText(suggestion);noteInput.setSelection(noteInput.length());showAmountKeyboard();});chip.setTextSize(12);chip.setMinHeight(Ui.dp(this,32));chip.setMaxWidth(Ui.dp(this,160));chip.setSingleLine(true);chip.setEllipsize(android.text.TextUtils.TruncateAt.END);Ui.pad(chip,10,4,10,4);chip.setTag(suggestion);chip.setTooltipText(suggestion);chip.setContentDescription("采用历史备注："+suggestion);LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-2,Ui.dp(this,32));p.rightMargin=Ui.dp(this,6);choices.addView(chip,p);noteChips.add(chip);}
+        strip.addView(choices);details.addView(strip,new LinearLayout.LayoutParams(-1,Ui.dp(this,36)));Ui.space(details,4);updateNoteSelection();
+    }
+    private void updateNoteSelection(){for(TextView chip:noteChips){boolean selected=chip.getTag().equals(note);chip.setSelected(selected);chip.setTextColor(selected?Ui.WHITE:Ui.GREEN);chip.setBackground(Ui.background(selected?Ui.GREEN:Ui.SAGE,10,this));}}
+    private void onImeVisibilityChanged(boolean visible){boolean closed=imeVisible&&!visible;imeVisible=visible;if(keyboard!=null)keyboard.setVisibility(visible?View.GONE:View.VISIBLE);if(closed&&noteInput!=null&&noteInput.hasFocus())showAmountKeyboard();}
+    private void showAmountKeyboard(){if(isDestroyed()||amountInput==null)return;capture();InputMethodManager input=(InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);if(input!=null)input.hideSoftInputFromWindow(amountInput.getWindowToken(),0);if(amountInput.isEnabled()){amountInput.requestFocus();amountInput.setSelection(amountInput.length());}if(keyboard!=null)keyboard.setVisibility(View.VISIBLE);}
     private TextView key(String label,boolean primary,Runnable action){TextView v=Ui.action(this,label,primary,action);v.setTextSize(22);if(!primary)v.setBackground(Ui.border(Ui.WHITE,11,this));Ui.pad(v,2,4,2,4);return v;}
     private GridLayout.LayoutParams keyParams(int row,int col,int span){GridLayout.LayoutParams p=new GridLayout.LayoutParams(GridLayout.spec(row,span),GridLayout.spec(col,1,1f));p.width=0;p.height=Ui.dp(this,span*49-6);p.setMargins(Ui.dp(this,3),Ui.dp(this,3),Ui.dp(this,3),Ui.dp(this,3));return p;}
     private void press(String key){if(saving)return;capture();String next=amount;if(key.equals("清空"))next="";else if(key.equals("backspace"))next=next.isEmpty()?"":next.substring(0,next.length()-1);else if(key.equals(".")){if(next.contains("."))return;next=(next.isEmpty()?"0":next)+".";}else{if(amountInput.hasSelection())next=key;else next+=key;}
@@ -91,13 +107,13 @@ public final class EntryActivity extends Activity {
     private void selectCategory(String selected){if(saving)return;capture();category=selected;rememberCategory(selected);render();}
     private void rememberCategory(String selected){recentCategories=RecentCategories.select(recentCategories,selected);getSharedPreferences("entry-ui",MODE_PRIVATE).edit().putString("recent-projects",String.join(",",recentCategories)).apply();}
     private void showError(String message){if(error==null)return;error.setText(message);error.setVisibility(message==null||message.isEmpty()?View.GONE:View.VISIBLE);}
-    private void showNotes(){if(noteInput==null||!noteInput.hasFocus())return;ArrayAdapter<?> adapter=(ArrayAdapter<?>)noteInput.getAdapter();adapter.getFilter().filter(null,count->{if(!isDestroyed()&&noteInput.hasFocus()&&count>0){noteInput.setDropDownWidth(noteInput.getWidth());noteInput.showDropDown();}});}
     private void editCategory(Ledger.Category existing){if(saving)return;capture();CategoryActivity.showEditor(this,store,ledger,type,existing,c->{worker.execute(()->{try{Ledger.Data latest=store.read();runOnUiThread(()->{if(isDestroyed())return;ledger=latest;category=c==null?firstCategory():c.id;if(c!=null)rememberCategory(c.id);render();});}catch(Exception e){runOnUiThread(()->Toast.makeText(this,e.getMessage(),Toast.LENGTH_LONG).show());}});});}
-    public static final class NoteInput extends AutoCompleteTextView {
+    public static final class NoteInput extends EditText {
+        Runnable imeDismissed;
         public NoteInput(Context context){super(context);}
-        @Override public boolean enoughToFilter(){return true;}
+        @Override public boolean onKeyPreIme(int code,KeyEvent event){boolean handled=super.onKeyPreIme(code,event);if(code==KeyEvent.KEYCODE_BACK&&event.getAction()==KeyEvent.ACTION_UP&&!event.isCanceled()&&imeDismissed!=null)post(imeDismissed);return handled;}
     }
-    @Override public void onBackPressed(){requestClose();}
+    @Override public void onBackPressed(){if(imeVisible){showAmountKeyboard();return;}requestClose();}
     @Override protected void onSaveInstanceState(Bundle out){capture();out.putBoolean("ready",ready);out.putString("id",id);out.putString("type",type);out.putString("category",category);out.putString("amount",amount);out.putString("note",note);out.putString("date",date);out.putString("createdAt",createdAt);out.putString("original",original);if(saving){out.putString("pendingStamp",pendingStamp);out.putBoolean("pendingContinue",pendingContinue);}super.onSaveInstanceState(out);}
     @Override protected void onDestroy(){worker.execute(store::close);super.onDestroy();}
 }

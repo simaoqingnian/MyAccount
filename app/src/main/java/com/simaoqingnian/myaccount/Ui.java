@@ -52,17 +52,33 @@ public final class Ui {
     public static void space(LinearLayout l,int height){View v=new View(l.getContext());l.addView(v,new LinearLayout.LayoutParams(1,dp(l.getContext(),height)));}
     public static void divider(LinearLayout l){View v=new View(l.getContext());v.setBackgroundColor(LINE);l.addView(v,new LinearLayout.LayoutParams(-1,dp(l.getContext(),1)));}
     public static void weight(LinearLayout row,View v){row.addView(v,new LinearLayout.LayoutParams(0,-2,1));}
-    public static void insets(Activity activity,View root){
+    public static void insets(Activity activity,View root){insets(activity,root,null);}
+    public static void insets(Activity activity,View root,java.util.function.Consumer<Boolean> imeVisibility){
         activity.getWindow().setStatusBarColor(PAPER);activity.getWindow().setNavigationBarColor(Build.VERSION.SDK_INT>=27?PAPER:GREEN);
         int flags=View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LAYOUT_STABLE|View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
         if(Build.VERSION.SDK_INT>=27)flags|=View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
         activity.getWindow().getDecorView().setSystemUiVisibility(flags);
         if(Build.VERSION.SDK_INT>=30)activity.getWindow().setDecorFitsSystemWindows(false);
         root.setOnApplyWindowInsetsListener((v,insets)->{
-            if(Build.VERSION.SDK_INT>=30){android.graphics.Insets system=insets.getInsets(WindowInsets.Type.systemBars()),ime=insets.getInsets(WindowInsets.Type.ime());v.setPadding(system.left,system.top,system.right,Math.max(system.bottom,ime.bottom));}
-            else v.setPadding(insets.getSystemWindowInsetLeft(),insets.getSystemWindowInsetTop(),insets.getSystemWindowInsetRight(),insets.getSystemWindowInsetBottom());
+            if(Build.VERSION.SDK_INT>=30){android.graphics.Insets system=insets.getInsets(WindowInsets.Type.systemBars()),ime=insets.getInsets(WindowInsets.Type.ime());v.setPadding(system.left,system.top,system.right,Math.max(system.bottom,ime.bottom));if(imeVisibility!=null)imeVisibility.accept(insets.isVisible(WindowInsets.Type.ime()));}
+            else {v.setPadding(insets.getSystemWindowInsetLeft(),insets.getSystemWindowInsetTop(),insets.getSystemWindowInsetRight(),insets.getSystemWindowInsetBottom());if(imeVisibility!=null)imeVisibility.accept(legacyImeVisible(root,insets));}
             return insets;
-        });root.requestApplyInsets();
+        });
+        if(Build.VERSION.SDK_INT<30&&imeVisibility!=null){
+            android.view.ViewTreeObserver.OnGlobalLayoutListener layout=()->{if(root.isAttachedToWindow())imeVisibility.accept(legacyImeVisible(root,root.getRootWindowInsets()));};
+            root.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener(){
+                @Override public void onViewAttachedToWindow(View v){v.getViewTreeObserver().addOnGlobalLayoutListener(layout);}
+                @Override public void onViewDetachedFromWindow(View v){if(v.getViewTreeObserver().isAlive())v.getViewTreeObserver().removeOnGlobalLayoutListener(layout);}
+            });
+            if(root.isAttachedToWindow())root.getViewTreeObserver().addOnGlobalLayoutListener(layout);
+        }
+        root.requestApplyInsets();
+    }
+    private static boolean legacyImeVisible(View root,WindowInsets insets){
+        int minimum=dp(root.getContext(),100);
+        if(insets!=null&&insets.getSystemWindowInsetBottom()>Math.max(minimum,insets.getStableInsetBottom()))return true;
+        android.graphics.Rect visible=new android.graphics.Rect();root.getWindowVisibleDisplayFrame(visible);
+        return root.getRootView().getHeight()-visible.bottom>minimum;
     }
     public static class Icon extends View {
         private final String name;private final int foreground;private final Paint p=new Paint(Paint.ANTI_ALIAS_FLAG);private final Path shape=new Path();

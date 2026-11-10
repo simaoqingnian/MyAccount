@@ -2,6 +2,8 @@
     <item name="action_add" type="id" />
     <item name="entry_amount" type="id" />
     <item name="entry_note" type="id" />
+    <item name="entry_note_history" type="id" />
+    <item name="entry_keypad" type="id" />
     <item name="entry_save" type="id" />
     <item name="entry_continue" type="id" />
     <item name="entry_date" type="id" />
