@@ -1,12 +1,45 @@
 <resources>
-    <style name="Theme.Heji" parent="android:style/Theme.Material.Light.NoActionBar">
+    <style name="Theme.Heji.SystemBars" parent="android:style/Theme.Material.Light.NoActionBar" />
+    <style name="Theme.Heji.Base" parent="Theme.Heji.SystemBars">
         <item name="android:fontFamily">sans</item>
-        <item name="android:colorAccent">#174E42</item>
-        <item name="android:windowBackground">#F7F8F2</item>
-        <item name="android:statusBarColor">#F7F8F2</item>
-        <item name="android:navigationBarColor">#174E42</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowActionModeOverlay">true</item>
         <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
+    <style name="Theme.Heji" parent="Theme.Heji.Base">
+        <item name="android:colorAccent">#7A572A</item>
+        <item name="android:windowBackground">#EEF0F2</item>
+        <item name="android:colorBackground">#EEF0F2</item>
+        <item name="android:statusBarColor">#EEF0F2</item>
+        <item name="android:navigationBarColor">#24272B</item>
+        <item name="android:textColorPrimary">#24272B</item>
+        <item name="android:textColorSecondary">#606870</item>
+        <item name="android:colorControlNormal">#606870</item>
+        <item name="android:colorControlActivated">#7A572A</item>
+        <item name="android:colorButtonNormal">#F8F9FA</item>
+    </style>
+    <style name="Theme.Heji.Sage" parent="Theme.Heji.Base">
+        <item name="android:colorAccent">#174E42</item>
+        <item name="android:windowBackground">#F7F8F2</item>
+        <item name="android:colorBackground">#F7F8F2</item>
+        <item name="android:statusBarColor">#F7F8F2</item>
+        <item name="android:navigationBarColor">#253B34</item>
+        <item name="android:textColorPrimary">#253B34</item>
+        <item name="android:textColorSecondary">#627067</item>
+        <item name="android:colorControlNormal">#627067</item>
+        <item name="android:colorControlActivated">#174E42</item>
+        <item name="android:colorButtonNormal">#FFFFFF</item>
+    </style>
+    <style name="Theme.Heji.Peach" parent="Theme.Heji.Base">
+        <item name="android:colorAccent">#9B5145</item>
+        <item name="android:windowBackground">#FFF9F2</item>
+        <item name="android:colorBackground">#FFF9F2</item>
+        <item name="android:statusBarColor">#FFF9F2</item>
+        <item name="android:navigationBarColor">#49392F</item>
+        <item name="android:textColorPrimary">#49392F</item>
+        <item name="android:textColorSecondary">#7D6A5B</item>
+        <item name="android:colorControlNormal">#7D6A5B</item>
+        <item name="android:colorControlActivated">#9B5145</item>
+        <item name="android:colorButtonNormal">#FFFDFA</item>
     </style>
 </resources>

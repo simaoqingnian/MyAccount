@@ -17,7 +17,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 /** Personal categories are shared by entry, reports, budget and backups. */
-public final class CategoryActivity extends Activity {
+public final class CategoryActivity extends ThemedActivity {
     private LedgerStore store;
     private Ledger.Data data = Ledger.Data.empty();
     private String type = "expense";
@@ -33,7 +33,7 @@ public final class CategoryActivity extends Activity {
         Ui.insets(this, root);
     }
 
-    @Override protected void onResume() { super.onResume(); reload(); }
+    @Override protected void onResume() { super.onResume(); if (!themeRefreshPending) reload(); }
 
     private void reload() {
         LedgerStore.IO.execute(() -> {
@@ -69,7 +69,7 @@ public final class CategoryActivity extends Activity {
             LinearLayout row = Ui.row(this);
             Ui.pad(row, 0, 10, 0, 10);
             Ui.Icon icon = new Ui.Icon(this, c.icon, Ui.GREEN);
-            icon.setBackground(Ui.background(Ui.SAGE, 12, this));
+            icon.setBackground(Ui.tile(this, false));
             Ui.pad(icon, 9, 9, 9, 9);
             row.addView(icon, new LinearLayout.LayoutParams(Ui.dp(this, 42), Ui.dp(this, 42)));
             TextView name = Ui.bold(this, c.name, 14, Ui.INK);
@@ -105,7 +105,7 @@ public final class CategoryActivity extends Activity {
         Runnable updatePreview = () -> {
             preview.removeAllViews();
             Ui.Icon icon = new Ui.Icon(owner, selected[0], Ui.GREEN);
-            icon.setBackground(Ui.background(Ui.SAGE, 13, owner));
+            icon.setBackground(Ui.tile(owner, false));
             Ui.pad(icon, 11, 11, 11, 11);
             preview.addView(icon, new LinearLayout.LayoutParams(Ui.dp(owner, 48), Ui.dp(owner, 48)));
             TextView caption = Ui.text(owner, "  " + IconCatalog.get(selected[0]).name + "    点击换图标  ›", 13, Ui.GREEN);
@@ -186,8 +186,8 @@ public final class CategoryActivity extends Activity {
             for (IconCatalog.Item item : items) {
                 LinearLayout cell = Ui.column(owner);
                 cell.setGravity(Gravity.CENTER);
-                Ui.Icon icon = new Ui.Icon(owner, item.id, item.id.equals(selected) ? Ui.WHITE : Ui.GREEN);
-                icon.setBackground(Ui.background(item.id.equals(selected) ? Ui.GREEN : Ui.SAGE, 12, owner));
+                Ui.Icon icon = new Ui.Icon(owner, item.id, item.id.equals(selected) ? Ui.ON_PRIMARY : Ui.INK);
+                icon.setBackground(Ui.tile(owner, item.id.equals(selected)));
                 Ui.pad(icon, 9, 9, 9, 9);
                 cell.addView(icon, new LinearLayout.LayoutParams(Ui.dp(owner, 42), Ui.dp(owner, 42)));
                 Ui.space(cell, 5);

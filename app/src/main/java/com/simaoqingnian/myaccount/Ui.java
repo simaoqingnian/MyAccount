@@ -20,15 +20,27 @@ import android.view.WindowInsets;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ImageView;
 
 public final class Ui {
-    public static final int PAPER=Color.rgb(247,248,242),GREEN=Color.rgb(23,78,66),INK=Color.rgb(37,59,52),MUTED=Color.rgb(103,118,109),SAGE=Color.rgb(230,237,223),LINE=Color.rgb(230,233,224),DANGER=Color.rgb(176,68,53),WHITE=Color.WHITE;
+    public static ThemePalette theme=ThemePalette.TITANIUM;
+    public static int PAPER,GREEN,INK,MUTED,SAGE,LINE,DANGER,WHITE,ON_PRIMARY,CARD_INK,CARD_MUTED,INCOME,CHART;
+    static {applyTheme(theme);}
+    public static void applyTheme(ThemePalette selected){theme=selected;PAPER=selected.paper;GREEN=selected.accent;INK=selected.ink;MUTED=selected.muted;SAGE=selected.soft;LINE=selected.line;DANGER=selected.danger;WHITE=selected.surface;ON_PRIMARY=selected.onPrimary;CARD_INK=selected.cardInk;CARD_MUTED=selected.cardMuted;INCOME=selected.income;CHART=selected.chart;}
     public static int dp(Context c,float n){return Math.round(n*c.getResources().getDisplayMetrics().density);}
     public static int color(String hex){return Color.parseColor(hex);}
     public static GradientDrawable background(int color,int radius,Context c){GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(dp(c,radius));return d;}
     public static GradientDrawable border(int fill,int radius,Context c){GradientDrawable d=background(fill,radius,c);d.setStroke(dp(c,1),LINE);return d;}
     /** A row owns only its bottom separator, exactly one physical pixel thick. */
-    public static void listItem(View row,int fill){row.setBackground(new RippleDrawable(ColorStateList.valueOf(0x1A174E42),new ListItemBackground(fill),null));}
+    public static void listItem(View row,int fill){row.setBackground(new RippleDrawable(ColorStateList.valueOf((GREEN&0xFFFFFF)|0x18000000),new ListItemBackground(fill),null));}
+    public static Drawable material(Context c,int kind,float radius){return new ThemeSurface(c,theme,kind,radius);}
+    public static Drawable primary(Context c,float radius){return material(c,ThemeSurface.PRIMARY,radius);}
+    public static Drawable tile(Context c,boolean selected){return material(c,selected?ThemeSurface.SELECTED_TILE:ThemeSurface.TILE,theme==ThemePalette.PEACH?13:11);}
+    public static Drawable tile(Context c,boolean selected,int index){if(theme==ThemePalette.PEACH&&!selected&&(index+1)%3==0)return border(0xFFE7EFDF,13,c);return tile(c,selected);}
+    public static Drawable numberKey(Context c){return material(c,ThemeSurface.NUMBER,10);}
+    public static LinearLayout balanceCard(Context c){LinearLayout card=column(c);card.setBackground(material(c,ThemeSurface.CARD,theme.radius));card.setElevation(dp(c,theme==ThemePalette.TITANIUM?2:0));pad(card,18,16,18,16);return card;}
+    public static View brandMark(Context c,int size){if(theme==ThemePalette.PEACH){ImageView image=new ImageView(c);image.setImageResource(R.drawable.peach_mascot);image.setScaleType(ImageView.ScaleType.FIT_CENTER);image.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);image.setLayoutParams(new LinearLayout.LayoutParams(dp(c,size),dp(c,size)));return image;}Icon leaf=new Icon(c,"leaf",CARD_MUTED);pad(leaf,3,3,3,3);leaf.setLayoutParams(new LinearLayout.LayoutParams(dp(c,size),dp(c,size)));return leaf;}
+    public static int categoryColor(String id,String original){if(theme==ThemePalette.SAGE)return color(original);int[] colors=theme==ThemePalette.PEACH?new int[]{0xFFF5C4B4,0xFFF6DFC0,0xFFDCE8D6,0xFFE6D7CA}:new int[]{0xFFB99B71,0xFFAEBCC6,0xFFCDD1D5,0xFFB4BABE};return colors[Math.floorMod(id.hashCode(),colors.length)];}
     private static final class ListItemBackground extends Drawable {
         private final int fill;private final Paint paint=new Paint();private int alpha=255;
         ListItemBackground(int fill){this.fill=fill;}
@@ -45,16 +57,16 @@ public final class Ui {
     public static LinearLayout row(Context c){LinearLayout l=new LinearLayout(c);l.setOrientation(LinearLayout.HORIZONTAL);l.setGravity(Gravity.CENTER_VERTICAL);return l;}
     public static TextView text(Context c,String text,int size,int color){TextView t=new TextView(c);t.setText(text);t.setTextSize(size);t.setTextColor(color);t.setIncludeFontPadding(false);t.setGravity(Gravity.CENTER_VERTICAL);return t;}
     public static TextView bold(Context c,String text,int size,int color){TextView t=text(c,text,size,color);t.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));return t;}
-    public static TextView action(Context c,String text,boolean primary,Runnable click){TextView t=bold(c,text,14,primary?WHITE:GREEN);t.setGravity(Gravity.CENTER);t.setMinHeight(dp(c,48));pad(t,14,10,14,10);t.setBackground(new RippleDrawable(ColorStateList.valueOf(0x1A174E42),background(primary?GREEN:SAGE,13,c),null));t.setOnClickListener(v->click.run());t.setFocusable(true);return t;}
+    public static TextView action(Context c,String text,boolean primary,Runnable click){TextView t=bold(c,text,14,primary?ON_PRIMARY:GREEN);t.setGravity(Gravity.CENTER);t.setMinHeight(dp(c,48));pad(t,14,10,14,10);t.setBackground(new RippleDrawable(ColorStateList.valueOf((GREEN&0xFFFFFF)|0x18000000),primary?primary(c,12):background(SAGE,12,c),null));t.setOnClickListener(v->click.run());t.setFocusable(true);return t;}
     public static TextView smallAction(Context c,String label,Runnable click){TextView t=action(c,label,false,click);t.setTextSize(12);t.setBackgroundColor(Color.TRANSPARENT);pad(t,6,6,6,6);return t;}
     public static EditText input(Context c,String hint){EditText e=new EditText(c);e.setSingleLine(true);e.setTextSize(15);e.setTextColor(INK);e.setHintTextColor(MUTED);e.setHint(hint);e.setBackground(border(WHITE,12,c));pad(e,13,10,13,10);e.setMinHeight(dp(c,48));return e;}
-    public static LinearLayout card(Context c,int color){LinearLayout l=column(c);l.setBackground(background(color,20,c));pad(l,18,18,18,18);return l;}
+    public static LinearLayout card(Context c,int color){LinearLayout l=column(c);l.setBackground(border(color,theme.radius,c));pad(l,18,18,18,18);return l;}
     public static void space(LinearLayout l,int height){View v=new View(l.getContext());l.addView(v,new LinearLayout.LayoutParams(1,dp(l.getContext(),height)));}
     public static void divider(LinearLayout l){View v=new View(l.getContext());v.setBackgroundColor(LINE);l.addView(v,new LinearLayout.LayoutParams(-1,dp(l.getContext(),1)));}
     public static void weight(LinearLayout row,View v){row.addView(v,new LinearLayout.LayoutParams(0,-2,1));}
     public static void insets(Activity activity,View root){insets(activity,root,null);}
     public static void insets(Activity activity,View root,java.util.function.Consumer<Boolean> imeVisibility){
-        activity.getWindow().setStatusBarColor(PAPER);activity.getWindow().setNavigationBarColor(Build.VERSION.SDK_INT>=27?PAPER:GREEN);
+        activity.getWindow().setStatusBarColor(PAPER);activity.getWindow().setNavigationBarColor(Build.VERSION.SDK_INT>=27?PAPER:INK);
         int flags=View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LAYOUT_STABLE|View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
         if(Build.VERSION.SDK_INT>=27)flags|=View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
         activity.getWindow().getDecorView().setSystemUiVisibility(flags);
@@ -92,6 +104,7 @@ public final class Ui {
                 case "arrow":path(c,9,5,16,12,9,19);break;
                 case "down":path(c,6,9,12,15,18,9);break;
                 case "check":path(c,5,12,9,16,19,6);break;
+                case "circle":c.drawCircle(12,12,8,p);break;
                 case "home":path(c,2,10,12,3,22,10);path(c,5,9,5,21,10,21,10,15,14,15,14,21,19,21,19,9);break;
                 case "food":line(c,5,3,5,21);line(c,2,3,2,8);line(c,8,3,8,8);c.drawArc(2,5,8,11,0,180,false,p);path(c,17,3,14,8,14,12,18,12);line(c,18,3,18,21);break;
                 case "bus":rect(c,4,4,20,18,3);line(c,4,10,20,10);line(c,7,18,7,21);line(c,17,18,17,21);c.drawCircle(8,14,1,p);c.drawCircle(16,14,1,p);break;
@@ -178,6 +191,7 @@ public final class Ui {
                 case "grid":for(int x=3;x<=15;x+=12)for(int y=3;y<=15;y+=12)rect(c,x,y,x+6,y+6,1);break;
                 default:for(int x=3;x<=15;x+=12)for(int y=3;y<=15;y+=12)rect(c,x,y,x+6,y+6,1);
             }c.restore();
+            if(isSelected()){float x=getWidth()-dp(getContext(),6),y=dp(getContext(),6),r=dp(getContext(),5);p.setStyle(Paint.Style.FILL);p.setColor(GREEN);c.drawCircle(x,y,r,p);p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(dp(getContext(),1));p.setColor(Color.WHITE);shape.reset();shape.moveTo(x-r*.5f,y);shape.lineTo(x-r*.1f,y+r*.35f);shape.lineTo(x+r*.55f,y-r*.4f);c.drawPath(shape,p);}
         }
         private void line(Canvas c,float a,float b,float x,float y){c.drawLine(a,b,x,y,p);}
         private void rect(Canvas c,float a,float b,float x,float y,float radius){c.drawRoundRect(a,b,x,y,radius,radius,p);}

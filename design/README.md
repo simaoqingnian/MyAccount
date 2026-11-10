@@ -1,5 +1,8 @@
 # 设计文件
 
+- `themes/preview.html`：2026-11-10 新增三主题切换样板，可离线对比“钛银 / 青禾绿 / 奶油桃桃”；原生 0.3.0 已接入主题切换，浏览器样板截图不作为设备截图。
+- `themes/titanium/`：“钛银”金属主题，指定 Sunburst 模型生成的三屏风格图、提示词和设计令牌。见 [设计说明](themes/titanium/README.md)。
+- `themes/peach/`：“奶油桃桃”可爱主题，指定 Sunburst 模型生成的三屏风格图、提示词和设计令牌。见 [设计说明](themes/peach/README.md)。
 - `sunburst-concept.png`：2026-11-04 生成，模型 `gpt-image-2.5-sunburst`，使用指定本地技能的 helper 与 Images API。分辨率 1536 × 1024，提示词见 `sunburst-prompt.txt`；未发生失败重试或 Responses 回退。
 - `prototype-overview.png`：实际 HTML 原型在桌面评审画布中的截图。
 - `prototype-screens.png`：实际手机页面拼接预览，字体、金额和图表来自原型真实渲染。
