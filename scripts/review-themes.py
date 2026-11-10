@@ -50,7 +50,8 @@ for name,foreground in [('material_titanium.png','#24272B'),('material_champagne
     minimum=min(contrast(foreground,'#%02X%02X%02X'%pixel) for pixel in set(image.get_flattened_data()))
     expect(minimum>=4.5,name+' text contrast across every material shade >= 4.5')
 
-apk=ROOT/'artifacts/Heji-0.3.0-debug.apk'
+version=re.search(r'versionName\s+"([^"]+)"',(ROOT/'app/build.gradle').read_text(encoding='utf-8')).group(1)
+apk=ROOT/f'artifacts/Heji-{version}-debug.apk'
 with zipfile.ZipFile(apk) as z:
     for name in ['material_titanium.png','material_champagne.png','peach_mascot.png']:
         entry=next(n for n in z.namelist() if n.startswith('res/') and n.endswith('/'+name))

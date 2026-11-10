@@ -2,6 +2,7 @@
 from pathlib import Path
 import json
 import math
+import random
 from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -14,26 +15,34 @@ ASSETS.mkdir(exist_ok=True)
 def rgb(value):
     return tuple(int(value[i:i+2], 16) for i in (1, 3, 5))
 
-def material(name, stops):
+def material(name, stops, satin=False):
     image = Image.new('RGB', (384, 240))
     pixels = image.load()
-    # CSS linear-gradient(115deg): 25 degrees down from the horizontal.
+    # Satin silver has a shallow vertical tone change, without diagonal bands.
+    # Keep the original champagne reflection for the few accent controls.
     dx, dy = math.cos(math.radians(25)), math.sin(math.radians(25))
     extent = 383 * dx + 239 * dy
+    noise = random.Random(20261110)
     for y in range(240):
+        row_grain = noise.uniform(-.55, .55) if satin else 0
         for x in range(384):
-            t = max(0, min(1, (x * dx + y * dy) / extent))
+            t = y / 239 if satin else max(0, min(1, (x * dx + y * dy) / extent))
             for a, b in zip(stops, stops[1:]):
                 if a['position'] <= t <= b['position']:
                     u = (t-a['position'])/(b['position']-a['position'])
-                    brush = (2, -2, 1, 2, 0, -3)[y % 6]
-                    pixels[x, y] = tuple(max(0, min(255, round(v+(w-v)*u)+brush)) for v, w in zip(rgb(a['color']), rgb(b['color'])))
+                    if satin:
+                        u = u * u * (3 - 2 * u)
+                        # Irregular micrograin avoids repeated bright stripes.
+                        brush = row_grain + noise.uniform(-.65, .65) + .25 * math.sin(x / 51 + y / 7)
+                    else:
+                        brush = (2, -2, 1, 2, 0, -3)[y % 6]
+                    pixels[x, y] = tuple(max(0, min(255, round(v+(w-v)*u+brush))) for v, w in zip(rgb(a['color']), rgb(b['color'])))
                     break
     image.save(ASSETS / name, optimize=True)
 
 titanium = json.loads((THEMES / 'titanium/tokens.json').read_text(encoding='utf-8'))
 peach = json.loads((THEMES / 'peach/tokens.json').read_text(encoding='utf-8'))
-material('material_titanium.png', titanium['materials']['titanium']['stops'])
+material('material_titanium.png', titanium['materials']['titanium']['stops'], satin=True)
 material('material_champagne.png', titanium['materials']['champagne']['stops'])
 
 # Original peach motif, shared verbatim by the browser and Android drawable.

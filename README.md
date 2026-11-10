@@ -2,15 +2,17 @@
 
 本项目包含鲨鱼记账公开资料调研、个人记账 MVP 需求、可交互网页原型、Sunburst 视觉概念图，以及基于原型开发的 **Android 原生应用**。调研与首版开发日期为 2026-11-04；用户已确认优先个人日常记账 MVP。
 
-**新主题设计样板（2026-11-10）：** [Sunburst 钛银金属主题](design/themes/titanium/sunburst-styleboard.png) · [Sunburst 奶油桃桃可爱主题](design/themes/peach/sunburst-styleboard.png) · [切换钛银 / 青禾绿 / 奶油桃桃预览](design/themes/preview.html)。两套新主题已接入下方 0.3.0 APK，可在“我的 → 外观主题”或记账页切换。
+**新主题设计样板（2026-11-10）：** [Sunburst 钛银金属主题](design/themes/titanium/sunburst-styleboard.png) · [Sunburst 奶油桃桃可爱主题](design/themes/peach/sunburst-styleboard.png) · [切换钛银 / 青禾绿 / 奶油桃桃预览](design/themes/preview.html)。两套新主题已接入下方 0.3.1 APK，可在“我的 → 外观主题”或记账页切换。
 
-**APK：[artifacts/Heji-0.3.0-debug.apk](artifacts/Heji-0.3.0-debug.apk)**。包名 `com.simaoqingnian.myaccount`，版本 `0.3.0 (9)`，支持 Android 8.0 / API 26 及以上，使用本项目独立的调试签名。APK 是本地构建产物，未提交到 Git；克隆仓库后可按下方命令生成。
+**APK：[artifacts/Heji-0.3.1-debug.apk](artifacts/Heji-0.3.1-debug.apk)**。包名 `com.simaoqingnian.myaccount`，版本 `0.3.1 (10)`，支持 Android 8.0 / API 26 及以上，使用本项目独立的调试签名。APK 是本地构建产物，未提交到 Git；克隆仓库后可按下方命令生成。
 
-需要一起带走源码、APK、需求和原型时，可使用本地交付包 [禾记-Android与需求-0.3.0.zip](禾记-Android与需求-0.3.0.zip)（不含本地 SDK、缓存和签名密钥）。执行 `python scripts/package-delivery.py` 可重新生成。
+需要一起带走源码、APK、需求和原型时，可使用本地交付包 [禾记-Android与需求-0.3.1.zip](禾记-Android与需求-0.3.1.zip)（不含本地 SDK、缓存和签名密钥）。执行 `python scripts/package-delivery.py` 可重新生成。
 
-应用采用 Java 原生界面与 SQLite 私有数据库，复用 FilmWord 的 JDK 17、Android SDK 35，以及当前电脑缓存中的 Gradle 8.7 / Android Gradle Plugin 8.6.1。首次启动为空账本，使用手机的真实日期；在“我的 → 载入演示账目”可追加近三年的虚构数据。按用户要求，**没有安装到手机或模拟器测试**。构建、静态检查及桌面账务 / 备份规则验证的具体结果见 [0.3.0 主题更新说明](docs/13-钛银与奶油桃桃主题更新.md)。
+应用采用 Java 原生界面与 SQLite 私有数据库，复用 FilmWord 的 JDK 17、Android SDK 35，以及当前电脑缓存中的 Gradle 8.7 / Android Gradle Plugin 8.6.1。首次启动为空账本，使用手机的真实日期；在“我的 → 载入演示账目”可追加近三年的虚构数据。按用户要求，**没有安装到手机或模拟器测试**。构建、静态检查及桌面账务 / 备份规则验证的具体结果见 [0.3.1 材质更新说明](docs/14-缎面雾银材质更新.md)。
 
 **v0.2 已补齐鲨鱼记账式图表组织：周/月/年趋势、历史年份和月份选择、分类排行、历年收支账单。** [直接打开年度图表](prototype/index.html#charts-year) · [直接打开历年账单](prototype/index.html#charts-history)。
+
+**Android 0.3.1 更新（2026-11-10）：默认钛银改用缎面雾银，去掉分类格、数字键和卡片上的斜亮带，以柔和微纹与边缘高光保留金属质感。** [查看前后对比](design/themes/titanium/texture-comparison.png)。
 
 **Android 0.3.0 更新（2026-11-10）：新增默认“钛银”金属主题与“奶油桃桃”可爱主题，保留青禾绿；我的和记账页可进入外观主题。原生与预览共用配色、金属材质和桃子素材，切换保留输入与筛选。**
 
@@ -28,14 +30,15 @@
 
 **Android 0.2.0 新增：40 个支出项目、12 个收入项目、72 个离线图标、自定义项目及同项目历史备注。** “记一笔 → ＋ 自定义”可选图标建项目；“我的 → 项目与图标”可管理项目。点击备注框可直接选用当前项目最近的历史备注。手动选过日期后，本轮使用的后续新增账目沿用该日期；重新开启应用默认今天，旋转和暂时切到后台不重置。直接编辑旧账目不会改变连续记账日期。
 
-新版沿用原包名与调试签名，versionCode 增加为 9。数据库在 0.2.0 由版本 1 升为 2，只新增项目表，本轮保持版本 2；旧账目、预算与设置的表结构保留。升级安装行为尚未实机验证。
+新版沿用原包名与调试签名，versionCode 增加为 10。数据库在 0.2.0 由版本 1 升为 2，只新增项目表，本轮保持版本 2；旧账目、预算与设置的表结构保留。升级安装行为尚未实机验证。
 
 **推荐从 [交付首页](index.html) 打开。无需安装依赖或启动服务，直接双击即可。**
 
 | 文件 | 用途 |
 |---|---|
-| [artifacts/Heji-0.3.0-debug.apk](artifacts/Heji-0.3.0-debug.apk) | 本地生成的 Android 安装包 |
-| [docs/13-钛银与奶油桃桃主题更新.md](docs/13-钛银与奶油桃桃主题更新.md) | 当前版本：钛银金属、奶油桃桃与青禾绿主题切换 |
+| [artifacts/Heji-0.3.1-debug.apk](artifacts/Heji-0.3.1-debug.apk) | 本地生成的 Android 安装包 |
+| [docs/14-缎面雾银材质更新.md](docs/14-缎面雾银材质更新.md) | 当前版本：银色去除斜亮带，改为缎面雾银材质 |
+| [docs/13-钛银与奶油桃桃主题更新.md](docs/13-钛银与奶油桃桃主题更新.md) | 0.3.0 三套主题接入与视觉校对说明 |
 | [docs/12-后台恢复与按需历史备注更新.md](docs/12-后台恢复与按需历史备注更新.md) | 0.2.6 后台恢复使用金额键盘、历史备注按需显示 |
 | [docs/11-备注横条与升级数据保留更新.md](docs/11-备注横条与升级数据保留更新.md) | 0.2.5 备注横条、收起输入法恢复键盘、升级保留与签名保护 |
 | [docs/10-列表分隔线与图表紧凑布局更新.md](docs/10-列表分隔线与图表紧凑布局更新.md) | 0.2.4 列表底部单线、图表与历年账单布局 |
@@ -75,7 +78,7 @@
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-android.ps1
 ```
 
-脚本自动定位 `D:\03_work\09_android\FilmWord\.jdk\jdk-17` 和 `.android-sdk`，选择现有 Gradle 缓存，生成本项目的 `local.properties` 并校验已有 `.android/debug.keystore` 的证书，最后输出到 `artifacts/Heji-0.3.0-debug.apk`。原签名文件缺失或与 `gradle/debug-signing.sha256` 不一致时停止打包；请从自己的保管位置恢复原签名文件。环境、签名文件和构建产物均不进入 Git。复用的只是工具链，本项目没有 FilmWord 的业务代码或数据。
+脚本自动定位 `D:\03_work\09_android\FilmWord\.jdk\jdk-17` 和 `.android-sdk`，选择现有 Gradle 缓存，生成本项目的 `local.properties` 并校验已有 `.android/debug.keystore` 的证书，最后输出到 `artifacts/Heji-0.3.1-debug.apk`。原签名文件缺失或与 `gradle/debug-signing.sha256` 不一致时停止打包；请从自己的保管位置恢复原签名文件。环境、签名文件和构建产物均不进入 Git。复用的只是工具链，本项目没有 FilmWord 的业务代码或数据。
 
 FilmWord 目录或缓存目录不同时可以指定参数；`-Online` 允许 Gradle 获取缺失依赖：
 
